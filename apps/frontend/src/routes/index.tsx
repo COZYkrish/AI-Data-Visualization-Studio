@@ -1,0 +1,78 @@
+import { createBrowserRouter } from "react-router-dom";
+
+// Layouts
+import { LandingLayout } from "../layouts/LandingLayout";
+import { AuthLayout } from "../layouts/AuthLayout";
+import { DashboardLayout } from "../layouts/DashboardLayout";
+import { ProtectedRoute } from "./ProtectedRoute";
+
+// Pages / Features
+import { Landing } from "../features/landing/Landing";
+import { Login } from "../features/auth/Login";
+import { Register } from "../features/auth/Register";
+import { Dashboard } from "../features/dashboard/Dashboard";
+import { Upload } from "../features/upload/Upload";
+import { Projects } from "../features/projects/Projects";
+import { Settings } from "../features/settings/Settings";
+import { NotFound } from "../features/error/NotFound";
+
+export const router = createBrowserRouter([
+  // Public Landing Routes
+  {
+    path: "/",
+    element: <LandingLayout />,
+    children: [
+      {
+        index: true,
+        element: <Landing />,
+      },
+    ],
+  },
+  // Auth Layout Routes
+  {
+    element: <AuthLayout />,
+    children: [
+      {
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "register",
+        element: <Register />,
+      },
+    ],
+  },
+  // Protected Dashboard Routes
+  {
+    path: "dashboard",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        element: <DashboardLayout />,
+        children: [
+          {
+            index: true,
+            element: <Dashboard />,
+          },
+          {
+            path: "upload",
+            element: <Upload />,
+          },
+          {
+            path: "projects",
+            element: <Projects />,
+          },
+          {
+            path: "settings",
+            element: <Settings />,
+          },
+        ],
+      },
+    ],
+  },
+  // Catch All 404 Route
+  {
+    path: "*",
+    element: <NotFound />,
+  },
+]);
