@@ -19,11 +19,6 @@ AI-Data-Visualization-Studio/
 │   ├── types/                # Shared TypeScript models and API types
 │   ├── eslint-config/        # Standardized ESLint configs
 │   └── tsconfig/             # Shared TypeScript configuration files
-├── docker/                   # Deployment and orchestration dockerfiles
-│   ├── dev.docker-compose.yml
-│   ├── prod.docker-compose.yml
-│   ├── frontend.Dockerfile
-│   └── backend.Dockerfile
 ├── .github/
 │   └── workflows/            # GitHub Actions CI workflows
 │       ├── frontend-ci.yml
@@ -61,26 +56,7 @@ AI-Data-Visualization-Studio/
 
 ## 3. Quick Start Guide
 
-### Prerequisites
-
-- Node.js (>= 20.0)
-- pnpm (>= 9.15.0)
-- Python (>= 3.11)
-- Docker & Docker Compose
-
-### Option A: Running with Docker (Recommended)
-
-1. Build and boot the local development environment:
-   ```bash
-   docker compose -f docker/dev.docker-compose.yml up --build
-   ```
-2. Once booted, the services are available at:
-   - **Frontend UI**: `http://localhost:3000`
-   - **Backend API**: `http://localhost:8000`
-   - **API OpenAPI Swagger Docs**: `http://localhost:8000/docs`
-   - **PostgreSQL Database**: `localhost:5432`
-
-### Option B: Local Native Development
+### Local Native Development
 
 #### 1. Root & Packages Setup
 
@@ -99,6 +75,7 @@ AI-Data-Visualization-Studio/
    ```bash
    pnpm --filter @studio/frontend dev
    ```
+2. The UI is available at `http://localhost:3000`.
 
 #### 3. Backend Development
 
@@ -120,10 +97,38 @@ AI-Data-Visualization-Studio/
    ```bash
    python main.py
    ```
+5. The API is available at `http://localhost:8000` (docs at `http://localhost:8000/docs`).
 
 ---
 
-## 4. API Design Standards
+## 4. Deployment Model
+
+### Frontend (Vercel)
+
+The React application is fully optimized for static web hosting on **Vercel**:
+
+- Set the root directory of the Vercel project to `apps/frontend`.
+- Build command: `pnpm run build`.
+- Output directory: `dist`.
+- Set the environment variable `VITE_API_URL` to point to the backend service.
+
+### Backend & Database (Render)
+
+The FastAPI application and PostgreSQL database are hosted on **Render**:
+
+- Create a **PostgreSQL** instance on Render to retrieve the database URI connection string.
+- Create a **Web Service** on Render pointing to `apps/backend`.
+- Environment settings:
+  - Select **Python** runtime.
+  - Set Build Command: `pip install -r requirements.txt`.
+  - Set Start Command: `uvicorn main:app --host 0.0.0.0 --port $PORT`.
+  - Configure environment variables:
+    - `ENV=production`
+    - `DATABASE_URL=<your-render-postgresql-url>`
+
+---
+
+## 5. API Design Standards
 
 All API routes follow versioning under the `/api/v1` prefix.
 
@@ -158,10 +163,9 @@ All API routes follow versioning under the `/api/v1` prefix.
 
 ---
 
-## 5. Development Standards
+## 6. Development Standards
 
-- **Pre-commit Hooks**: We use Husky and `lint-staged` to format files (`prettier`) and lint code (`eslint` and `ruff`) prior to commits.
-- **Python Conventions**: Use Ruff for import sorting and black-equivalent formatting.
+- **Pre-commit Hooks**: We use Husky and `lint-staged` to format files (`prettier`) and lint code (`eslint`) prior to commits.
 - **Git Branching Strategy**:
   - `main`: Protected production-ready code.
   - `feature/<name>`: Feature branch. Create a pull request targeting `main` to trigger CI testing.
