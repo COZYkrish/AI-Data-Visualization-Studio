@@ -1,15 +1,16 @@
 import * as React from "react";
 import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 
 // ─── Floating animation preset ──────────────────────────────────────────────
-const floatVariants = {
+const floatVariants: Variants = {
   animate: (custom: number) => ({
     y: [0, -10 - custom * 3, 0],
     rotate: [0, custom % 2 === 0 ? 3 : -3, 0],
     transition: {
       duration: 5 + custom * 0.7,
       repeat: Infinity,
-      ease: "easeInOut",
+      ease: "easeInOut" as const,
     },
   }),
 };
