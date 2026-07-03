@@ -20,9 +20,10 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     if payload is None:
         raise credentials_exception
         
-    user_id: str = payload.get("sub")
-    if user_id is None:
+    user_id_raw = payload.get("sub")
+    if user_id_raw is None or not isinstance(user_id_raw, str):
         raise credentials_exception
+    user_id: str = user_id_raw
         
     user_repo = UserRepository(db)
     user = user_repo.get_by_id(user_id)

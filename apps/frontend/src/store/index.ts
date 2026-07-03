@@ -21,8 +21,11 @@ interface UserState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
+  sessionStatus: "authenticated" | "unauthenticated" | "loading" | "expired";
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
+  setSessionExpired: () => void;
   logout: () => void;
 }
 
@@ -34,6 +37,8 @@ export const useUserStore = create<UserState>((set) => {
     user: storedUser ? JSON.parse(storedUser) : null,
     token: storedToken || null,
     isAuthenticated: !!storedToken,
+    isLoading: false,
+    sessionStatus: storedToken ? "authenticated" : "unauthenticated",
     setUser: (user) => {
       if (user) {
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
@@ -44,17 +49,38 @@ export const useUserStore = create<UserState>((set) => {
     },
     setToken: (token) => {
       if (token) {
+        // Only keeping this temporarily in local storage for legacy compatibility
+        // The real token for refresh is HTTP-only cookie
         localStorage.setItem(STORAGE_KEYS.TOKEN, token);
-        set({ token, isAuthenticated: true });
+        set({ token, isAuthenticated: true, sessionStatus: "authenticated" });
       } else {
         localStorage.removeItem(STORAGE_KEYS.TOKEN);
-        set({ token: null, isAuthenticated: false });
+        set({
+          token: null,
+          isAuthenticated: false,
+          sessionStatus: "unauthenticated",
+        });
       }
+    },
+    setSessionExpired: () => {
+      localStorage.removeItem(STORAGE_KEYS.TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.USER);
+      set({
+        token: null,
+        user: null,
+        isAuthenticated: false,
+        sessionStatus: "expired",
+      });
     },
     logout: () => {
       localStorage.removeItem(STORAGE_KEYS.USER);
       localStorage.removeItem(STORAGE_KEYS.TOKEN);
-      set({ user: null, token: null, isAuthenticated: false });
+      set({
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        sessionStatus: "unauthenticated",
+      });
     },
   };
 });

@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
     "@studio/types": "workspace:*",
     "@studio/ui": "workspace:*",
     "@tanstack/react-query": "^5.62.7",

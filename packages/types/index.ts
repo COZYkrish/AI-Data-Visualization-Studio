@@ -3,10 +3,33 @@ export type Theme = "light" | "dark" | "system";
 export interface User {
   id: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
+  full_name?: string;
+  username?: string;
+  avatar_url?: string;
+  bio?: string;
+  timezone?: string;
+  email_verified: boolean;
+  is_active: boolean;
+  last_login_at?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Session {
+  id: string;
+  device_name?: string;
+  browser?: string;
+  operating_system?: string;
+  ip_address?: string;
+  created_at: string;
+  last_active: string;
+  is_current: boolean;
+}
+
+export interface AuthTokens {
+  access_token: string;
+  token_type: string;
+  expires_in?: number;
 }
 
 export interface Dataset {

@@ -10,6 +10,11 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { Landing } from "../features/landing/Landing";
 import { Login } from "../features/auth/Login";
 import { Register } from "../features/auth/Register";
+import { ForgotPassword } from "../features/auth/ForgotPassword";
+import { ResetPassword } from "../features/auth/ResetPassword";
+import { VerifyEmail } from "../features/auth/VerifyEmail";
+import { EmailSent } from "../features/auth/EmailSent";
+import { SessionExpired } from "../features/auth/SessionExpired";
 import { Dashboard } from "../features/dashboard/Dashboard";
 import { Upload } from "../features/upload/Upload";
 import { Projects } from "../features/projects/Projects";
@@ -39,6 +44,26 @@ export const router = createBrowserRouter([
       {
         path: "register",
         element: <Register />,
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPassword />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPassword />,
+      },
+      {
+        path: "verify-email",
+        element: <VerifyEmail />,
+      },
+      {
+        path: "email-sent",
+        element: <EmailSent />,
+      },
+      {
+        path: "session-expired",
+        element: <SessionExpired />,
       },
     ],
   },

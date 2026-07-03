@@ -1,120 +1,111 @@
 import * as React from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useUserStore } from "../../store";
-import {
-  Button,
-  Input,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-  useToast,
-} from "@studio/ui";
+import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button, Input, Label } from "@studio/ui";
+import { useAuthHooks } from "./hooks/useAuth";
+import { AuthCard } from "./components/AuthCard";
+import { PasswordInput } from "./components/PasswordInput";
+import { FormError } from "./components/FormError";
+
+const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const Login: React.FC = () => {
-  const navigate = useNavigate();
-  const { setToken, setUser } = useUserStore();
-  const { toast } = useToast();
+  const { useLoginMutation } = useAuthHooks();
+  const loginMutation = useLoginMutation();
 
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !password) {
-      toast({
-        title: "Input Validation Error",
-        description: "Please fill out all login credentials.",
-        type: "error",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-
-    // Mock API authenticate delay
-    setTimeout(() => {
-      setIsLoading(false);
-      setUser({
-        id: "usr_mock123",
-        email: email,
-        firstName: "Developer",
-        lastName: "Studio",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
-      setToken("mock_jwt_token_xyz_123");
-      toast({
-        title: "Access Granted",
-        description: "Successfully signed in. Welcome to Studio.ai!",
-        type: "success",
-      });
-      navigate("/dashboard");
-    }, 800);
+  const onSubmit = (data: LoginFormValues) => {
+    loginMutation.mutate(data);
   };
 
   return (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-xl font-bold font-sans">Sign In</CardTitle>
-        <CardDescription>
-          Enter your email below to log in to your dashboard.
-        </CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          <div className="space-y-1.5">
-            <label
-              className="text-xs font-semibold text-muted-foreground uppercase"
-              htmlFor="email"
-            >
-              Email Address
-            </label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label
-              className="text-xs font-semibold text-muted-foreground uppercase"
-              htmlFor="password"
-            >
-              Password
-            </label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-3">
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Signing In..." : "Sign In with Password"}
-          </Button>
-          <p className="text-xs text-center text-muted-foreground">
+    <AuthCard
+      title="Welcome back"
+      description="Enter your credentials to access your workspace."
+      footer={
+        <>
+          <p className="text-sm text-center text-muted-foreground">
             Don't have an account?{" "}
             <Link
               to="/register"
-              className="text-primary hover:underline font-medium"
+              className="text-primary font-semibold hover:underline"
             >
-              Create an account
+              Sign up
             </Link>
           </p>
-        </CardFooter>
+        </>
+      }
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <FormError message={loginMutation.error?.message} />
+
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="name@example.com"
+            {...register("email")}
+            className={
+              errors.email
+                ? "border-destructive focus-visible:ring-destructive"
+                : ""
+            }
+          />
+          {errors.email && (
+            <p className="text-xs text-destructive">{errors.email.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="password">Password</Label>
+            <Link
+              to="/forgot-password"
+              className="text-xs text-primary hover:underline font-medium"
+            >
+              Forgot password?
+            </Link>
+          </div>
+          <PasswordInput
+            id="password"
+            placeholder="••••••••"
+            {...register("password")}
+            error={!!errors.password}
+          />
+          {errors.password && (
+            <p className="text-xs text-destructive">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full mt-2"
+          disabled={loginMutation.isPending}
+        >
+          {loginMutation.isPending ? "Signing in..." : "Sign in"}
+        </Button>
       </form>
-    </Card>
+    </AuthCard>
   );
 };
-export default Login;

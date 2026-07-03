@@ -1,137 +1,166 @@
 import * as React from "react";
-import { useNavigate, Link } from "react-router-dom";
-import {
-  Button,
-  Input,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-  useToast,
-} from "@studio/ui";
+import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button, Input, Label } from "@studio/ui";
+import { useAuthHooks } from "./hooks/useAuth";
+import { AuthCard } from "./components/AuthCard";
+import { PasswordInput } from "./components/PasswordInput";
+import { PasswordStrengthMeter } from "./components/PasswordStrengthMeter";
+import { FormError } from "./components/FormError";
+
+const registerSchema = z
+  .object({
+    full_name: z.string().min(2, "Name must be at least 2 characters").max(100),
+    email: z.string().email("Please enter a valid email address"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number")
+      .regex(
+        /[^A-Za-z0-9]/,
+        "Password must contain at least one special character",
+      ),
+    confirm_password: z.string(),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: "Passwords don't match",
+    path: ["confirm_password"],
+  });
+
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export const Register: React.FC = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
+  const { useRegisterMutation } = useAuthHooks();
+  const registerMutation = useRegisterMutation();
 
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(false);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      full_name: "",
+      email: "",
+      password: "",
+      confirm_password: "",
+    },
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !password || !confirmPassword) {
-      toast({
-        title: "Validation Error",
-        description: "Please fill out all fields.",
-        type: "error",
-      });
-      return;
-    }
+  const passwordValue = watch("password");
 
-    if (password !== confirmPassword) {
-      toast({
-        title: "Password Mismatch",
-        description: "Your passwords do not match.",
-        type: "error",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Account Created",
-        description:
-          "Registration successful. Please sign in with your credentials.",
-        type: "success",
-      });
-      navigate("/login");
-    }, 800);
+  const onSubmit = (data: RegisterFormValues) => {
+    // Send only what API expects
+    const apiData = {
+      full_name: data.full_name,
+      email: data.email,
+      password: data.password,
+    };
+    registerMutation.mutate(apiData);
   };
 
   return (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-xl font-bold font-sans">
-          Create Account
-        </CardTitle>
-        <CardDescription>
-          Enter your details below to set up your Studio.ai workspace.
-        </CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          <div className="space-y-1.5">
-            <label
-              className="text-xs font-semibold text-muted-foreground uppercase"
-              htmlFor="email"
-            >
-              Email Address
-            </label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label
-              className="text-xs font-semibold text-muted-foreground uppercase"
-              htmlFor="password"
-            >
-              Password
-            </label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label
-              className="text-xs font-semibold text-muted-foreground uppercase"
-              htmlFor="confirmPassword"
-            >
-              Confirm Password
-            </label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              placeholder="••••••••"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-3">
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Creating Account..." : "Create Account"}
-          </Button>
-          <p className="text-xs text-center text-muted-foreground">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="text-primary hover:underline font-medium"
-            >
-              Sign In
-            </Link>
-          </p>
-        </CardFooter>
+    <AuthCard
+      title="Create an account"
+      description="Join thousands of teams analyzing data with Studio.ai."
+      footer={
+        <p className="text-sm text-center text-muted-foreground">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-primary font-semibold hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
+      }
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <FormError message={registerMutation.error?.message} />
+
+        <div className="space-y-2">
+          <Label htmlFor="full_name">Full Name</Label>
+          <Input
+            id="full_name"
+            placeholder="Jane Doe"
+            {...register("full_name")}
+            className={
+              errors.full_name
+                ? "border-destructive focus-visible:ring-destructive"
+                : ""
+            }
+          />
+          {errors.full_name && (
+            <p className="text-xs text-destructive">
+              {errors.full_name.message}
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="name@example.com"
+            {...register("email")}
+            className={
+              errors.email
+                ? "border-destructive focus-visible:ring-destructive"
+                : ""
+            }
+          />
+          {errors.email && (
+            <p className="text-xs text-destructive">{errors.email.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <PasswordInput
+            id="password"
+            placeholder="Create a strong password"
+            {...register("password")}
+            error={!!errors.password}
+          />
+          {passwordValue && <PasswordStrengthMeter password={passwordValue} />}
+          {errors.password && !passwordValue && (
+            <p className="text-xs text-destructive">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="confirm_password">Confirm Password</Label>
+          <PasswordInput
+            id="confirm_password"
+            placeholder="Confirm your password"
+            {...register("confirm_password")}
+            error={!!errors.confirm_password}
+          />
+          {errors.confirm_password && (
+            <p className="text-xs text-destructive">
+              {errors.confirm_password.message}
+            </p>
+          )}
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full mt-2"
+          disabled={registerMutation.isPending}
+        >
+          {registerMutation.isPending
+            ? "Creating account..."
+            : "Create account"}
+        </Button>
       </form>
-    </Card>
+    </AuthCard>
   );
 };
-export default Register;

@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import Request
 import hashlib
 from datetime import datetime, timedelta
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Optional
 
 from app.config import settings
 from app.exceptions import APIException
@@ -64,18 +64,19 @@ class AuthService:
         refresh_token_hash = hashlib.sha256(refresh_token.encode()).hexdigest()
         
         # Create session
+        user_agent = request.headers.get("user-agent") if request else None
         session_data = {
             "user_id": user.id,
             "refresh_token_hash": refresh_token_hash,
             "expires_at": datetime.utcnow() + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
             "ip_address": request.client.host if request and request.client else None,
-            "user_agent": request.headers.get("user-agent")[:1000] if request else None
+            "user_agent": user_agent[:1000] if user_agent else None
         }
         self.session_repo.create_session(session_data)
         
         return access_token, refresh_token, user
 
-    def logout(self, refresh_token: str) -> None:
+    def logout(self, refresh_token: Optional[str]) -> None:
         if not refresh_token:
             return
             
@@ -85,7 +86,7 @@ class AuthService:
         if session:
             self.session_repo.revoke_session(session.id)
 
-    def refresh_tokens(self, refresh_token: str, request: Request) -> Tuple[str, str]:
+    def refresh_tokens(self, refresh_token: Optional[str], request: Request) -> Tuple[str, str]:
         if not refresh_token:
             raise APIException(status_code=401, code="MISSING_TOKEN", message="Refresh token missing")
             
@@ -95,6 +96,8 @@ class AuthService:
             raise APIException(status_code=401, code="INVALID_TOKEN", message="Invalid or expired refresh token")
             
         user_id = payload.get("sub")
+        if not user_id or not isinstance(user_id, str):
+            raise APIException(status_code=401, code="INVALID_TOKEN", message="Invalid or expired refresh token")
         refresh_token_hash = hashlib.sha256(refresh_token.encode()).hexdigest()
         
         session = self.session_repo.get_by_token_hash(refresh_token_hash)
@@ -113,12 +116,13 @@ class AuthService:
         new_refresh_token_hash = hashlib.sha256(new_refresh_token.encode()).hexdigest()
         
         # New session
+        new_user_agent = request.headers.get("user-agent") if request else None
         session_data = {
             "user_id": user.id,
             "refresh_token_hash": new_refresh_token_hash,
             "expires_at": datetime.utcnow() + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
             "ip_address": request.client.host if request and request.client else session.ip_address,
-            "user_agent": request.headers.get("user-agent")[:1000] if request else session.user_agent
+            "user_agent": new_user_agent[:1000] if new_user_agent else session.user_agent
         }
         self.session_repo.create_session(session_data)
         
