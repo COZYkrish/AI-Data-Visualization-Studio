@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.core.logging import setup_logging
 from app.middlewares.logging import RequestLoggingMiddleware
+from app.middlewares.rate_limit import setup_rate_limiting
 from app.exceptions import setup_exception_handlers
 from app.api.v1 import api_router
 
@@ -32,6 +33,9 @@ def create_app() -> FastAPI:
 
   # Register global exception handlers
   setup_exception_handlers(app)
+  
+  # Setup rate limiting
+  setup_rate_limiting(app)
 
   # Register api routes under version prefix
   app.include_router(api_router, prefix=settings.API_V1_STR)
