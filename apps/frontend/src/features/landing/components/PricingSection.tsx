@@ -2,11 +2,8 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Zap, Building2, Sparkles } from "lucide-react";
-import {
-  SectionWrapper,
-  StaggerContainer,
-  StaggerItem,
-} from "./shared/SectionWrapper";
+import { SectionWrapper } from "./shared/SectionWrapper";
+
 import {
   GeometricCircle,
   GeometricStar,

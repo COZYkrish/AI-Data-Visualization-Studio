@@ -8,11 +8,7 @@ import {
   FileCheck,
   ArrowRight,
 } from "lucide-react";
-import {
-  SectionWrapper,
-  StaggerContainer,
-  StaggerItem,
-} from "./shared/SectionWrapper";
+import { SectionWrapper } from "./shared/SectionWrapper";
 import {
   GeometricTriangle,
   GeometricPill,

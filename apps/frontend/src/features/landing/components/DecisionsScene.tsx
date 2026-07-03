@@ -9,11 +9,7 @@ import {
   Trophy,
   Zap,
 } from "lucide-react";
-import {
-  SectionWrapper,
-  StaggerContainer,
-  StaggerItem,
-} from "./shared/SectionWrapper";
+import { SectionWrapper } from "./shared/SectionWrapper";
 import { AnimatedCounter } from "./shared/AnimatedCounter";
 import {
   GeometricCircle,
