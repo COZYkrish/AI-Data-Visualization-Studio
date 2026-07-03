@@ -24,6 +24,17 @@ export const LandingNav: React.FC = () => {
     setScrolled(latest > 40);
   });
 
+  // Close mobile menu when viewport becomes desktop width
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setMobileOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
       <motion.header
