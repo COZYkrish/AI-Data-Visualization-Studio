@@ -2,8 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   GOOGLE FONTS IMPORT (fallback if index.html link is blocked)
+   ============================================================ */
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap");
+
 @layer base {
   :root {
+    /* ── shadcn/ui tokens (light) ───────────────────────────── */
     --background: 220 33% 98%;
     --foreground: 224 71.4% 4.1%;
 
@@ -33,6 +39,25 @@
     --ring: 262 83% 58%;
 
     --radius: 0.75rem;
+
+    /* ── Landing-specific design tokens ─────────────────────── */
+    --landing-bg: #fafaf7;
+    --landing-bg-dark: #0b0a12;
+    --landing-surface: #ffffff;
+    --landing-border: #e8e8e0;
+
+    /* Brand palette */
+    --vivid-violet: #7c3aed;
+    --vivid-violet-light: #a78bfa;
+    --landing-pink: #f43f5e;
+    --landing-yellow: #fbbf24;
+    --landing-emerald: #10b981;
+    --landing-cyan: #06b6d4;
+    --landing-orange: #f97316;
+
+    /* Hard-shadow offset */
+    --hard-shadow: 4px 4px 0px;
+    --hard-shadow-lg: 6px 6px 0px;
   }
 
   .dark {
@@ -70,13 +95,364 @@
   * {
     @apply border-border;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 
-/* Custom Scrollbars */
+/* ============================================================
+   KEYFRAME ANIMATIONS
+   ============================================================ */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-12px) rotate(2deg);
+  }
+  66% {
+    transform: translateY(-6px) rotate(-1deg);
+  }
+}
+
+@keyframes float-delayed {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-8px) rotate(-2deg);
+  }
+  66% {
+    transform: translateY(-14px) rotate(1deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 20px rgba(124, 58, 237, 0);
+  }
+}
+
+@keyframes pulse-glow-pink {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 16px rgba(244, 63, 94, 0);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-slow-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes draw-line {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0) rotate(-10deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15) rotate(3deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes particle-drift {
+  0% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-80px) translateX(20px);
+    opacity: 0;
+  }
+}
+
+@keyframes dash-march {
+  from {
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ============================================================
+   TYPOGRAPHY UTILITIES
+   ============================================================ */
+.font-outfit {
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-jakarta {
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ============================================================
+   GRADIENT TEXT UTILITIES
+   ============================================================ */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 dark:from-violet-400 dark:via-indigo-400 dark:to-cyan-400;
+}
+
+.text-gradient-vivid {
+  background: linear-gradient(135deg, #7c3aed 0%, #f43f5e 50%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-aurora {
+  background: linear-gradient(
+    90deg,
+    #10b981 0%,
+    #06b6d4 33%,
+    #7c3aed 66%,
+    #f43f5e 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 4s linear infinite;
+}
+
+/* ============================================================
+   HARD SHADOW UTILITIES
+   ============================================================ */
+.hard-shadow {
+  box-shadow: var(--hard-shadow) currentColor;
+}
+
+.hard-shadow-violet {
+  box-shadow: 4px 4px 0px #7c3aed;
+}
+
+.hard-shadow-pink {
+  box-shadow: 4px 4px 0px #f43f5e;
+}
+
+.hard-shadow-yellow {
+  box-shadow: 4px 4px 0px #fbbf24;
+}
+
+.hard-shadow-emerald {
+  box-shadow: 4px 4px 0px #10b981;
+}
+
+.hard-shadow-lg-violet {
+  box-shadow: 6px 6px 0px #7c3aed;
+}
+
+/* ============================================================
+   GLASS PANEL UTILITIES
+   ============================================================ */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.dark .glass-panel {
+  background: rgba(11, 10, 18, 0.55);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-dark {
+  background: rgba(11, 10, 18, 0.65);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================================
+   ANIMATION UTILITY CLASSES
+   ============================================================ */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 7s ease-in-out infinite 1s;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
+.animate-pulse-glow-pink {
+  animation: pulse-glow-pink 2.5s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spin-slow-reverse 25s linear infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-draw {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw-line 2s ease-out forwards;
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-gradient-shift {
+  background-size: 200% auto;
+  animation: gradient-shift 4s linear infinite;
+}
+
+/* ============================================================
+   LANDING PAGE SPECIFIC UTILITIES
+   ============================================================ */
+.landing-section {
+  @apply relative overflow-hidden;
+}
+
+.landing-bg-warm {
+  background-color: var(--landing-bg);
+}
+
+.landing-bg-dark {
+  background-color: var(--landing-bg-dark);
+}
+
+.dot-grid {
+  background-image: radial-gradient(circle, #d1d0cb 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dot-grid-dark {
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.08) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+}
+
+.sticker-badge {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border-2;
+  box-shadow: 3px 3px 0px currentColor;
+}
+
+.nav-link {
+  @apply text-sm font-medium text-foreground/70 hover:text-foreground transition-colors duration-200 relative;
+}
+
+.nav-link::after {
+  content: "";
+  @apply absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary transition-all duration-300;
+}
+
+.nav-link:hover::after {
+  @apply w-full;
+}
+
+/* ============================================================
+   CUSTOM SCROLLBARS
+   ============================================================ */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -92,21 +468,15 @@
   background: hsl(var(--muted-foreground) / 0.5);
 }
 
-/* Premium UI Utilities */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-}
-
-.dark .glass-panel {
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 dark:from-violet-400 dark:via-indigo-400 dark:to-cyan-400;
+/* ============================================================
+   REDUCED MOTION ACCESSIBILITY
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
