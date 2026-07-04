@@ -4,3 +4,4 @@ from app.models.session import UserSession
 from app.models.email_verification import EmailVerificationToken
 from app.models.password_reset import PasswordResetToken
 from app.models.project import Project
+from app.models.dataset import Dataset, DatasetMetadata, ProcessingJob
