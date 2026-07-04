@@ -36,7 +36,7 @@ export const DashboardLayout: React.FC = () => {
 
   const menuItems = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-    { name: "Upload Dataset", path: "/dashboard/upload", icon: Upload },
+    { name: "Datasets", path: "/dashboard/datasets", icon: Database },
     { name: "Projects", path: "/dashboard/projects", icon: FolderKanban },
     { name: "Settings", path: "/dashboard/settings", icon: Settings },
   ];

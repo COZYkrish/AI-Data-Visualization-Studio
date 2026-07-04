@@ -20,7 +20,11 @@ import { Upload } from "../features/upload/Upload";
 import { Projects } from "../features/projects/Projects";
 import { Settings } from "../features/settings/Settings";
 import { NotFound } from "../features/error/NotFound";
-
+import {
+  DatasetList,
+  DatasetDetail,
+  DatasetUpload,
+} from "../features/datasets/pages";
 export const router = createBrowserRouter([
   // Public Landing Routes
   {
@@ -82,6 +86,23 @@ export const router = createBrowserRouter([
           {
             path: "upload",
             element: <Upload />,
+          },
+          {
+            path: "datasets",
+            children: [
+              {
+                index: true,
+                element: <DatasetList />,
+              },
+              {
+                path: "upload",
+                element: <DatasetUpload />,
+              },
+              {
+                path: ":id",
+                element: <DatasetDetail />,
+              },
+            ],
           },
           {
             path: "projects",

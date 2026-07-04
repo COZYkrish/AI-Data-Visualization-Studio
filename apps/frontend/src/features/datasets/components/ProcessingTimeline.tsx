@@ -78,7 +78,7 @@ export const ProcessingTimeline: React.FC<ProcessingTimelineProps> = ({
                 animate={{
                   scale: stepStatus === "current" ? 1.2 : 1,
                   backgroundColor:
-                    stepStatus === "completed" || stepStatus === "ready"
+                    stepStatus === "completed"
                       ? "hsl(var(--primary))"
                       : stepStatus === "current"
                         ? "hsl(var(--background))"
@@ -90,7 +90,7 @@ export const ProcessingTimeline: React.FC<ProcessingTimelineProps> = ({
                 }}
                 className={cn(
                   "w-10 h-10 rounded-full flex items-center justify-center border-2 shadow-sm transition-colors duration-300",
-                  stepStatus === "completed" || stepStatus === "ready"
+                  stepStatus === "completed"
                     ? "text-primary-foreground"
                     : stepStatus === "current"
                       ? "text-primary border-primary"
