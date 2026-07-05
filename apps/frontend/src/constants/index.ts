@@ -25,6 +25,15 @@ export const API_ROUTES = {
   PROJECTS: {
     BASE: "/projects",
   },
+  DASHBOARD: {
+    BASE: "/dashboard",
+    KPIS: "/dashboard/kpis",
+    CHARTS: "/dashboard/charts",
+    QUERY: "/dashboard/query",
+    RECOMMENDATIONS: "/dashboard/recommendations",
+    EXPORT: "/dashboard/export-chart",
+    STATISTICS: (id: string) => `/dashboard/datasets/${id}/statistics`,
+  },
 };
 
 export const STORAGE_KEYS = {
