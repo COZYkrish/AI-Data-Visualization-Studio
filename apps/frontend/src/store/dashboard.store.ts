@@ -6,7 +6,7 @@
  */
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import {
+import type {
   DashboardState,
   FilterCondition,
   ChartSettings,
@@ -14,7 +14,7 @@ import {
 
 export const useDashboardStore = create<DashboardState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       // ── State ─────────────────────────────────────────────────────────────
       selectedDatasetId: null,
       activeFilters: [],

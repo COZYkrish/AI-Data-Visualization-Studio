@@ -13,8 +13,6 @@ import {
   Shield,
   Rows,
   Columns,
-  TrendingUp,
-  TrendingDown,
 } from "lucide-react";
 import type { KPICard as KPICardType } from "../types";
 
