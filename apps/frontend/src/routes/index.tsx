@@ -16,6 +16,10 @@ import { VerifyEmail } from "../features/auth/VerifyEmail";
 import { EmailSent } from "../features/auth/EmailSent";
 import { SessionExpired } from "../features/auth/SessionExpired";
 import { Dashboard } from "../features/dashboard/Dashboard";
+import {
+  DatasetAnalytics,
+  SavedDashboards,
+} from "../features/dashboard/Dashboard";
 import { Upload } from "../features/upload/Upload";
 import { Projects } from "../features/projects/Projects";
 import { Settings } from "../features/settings/Settings";
@@ -103,6 +107,14 @@ export const router = createBrowserRouter([
                 element: <DatasetDetail />,
               },
             ],
+          },
+          {
+            path: "analytics/:id",
+            element: <DatasetAnalytics />,
+          },
+          {
+            path: "saved",
+            element: <SavedDashboards />,
           },
           {
             path: "projects",
