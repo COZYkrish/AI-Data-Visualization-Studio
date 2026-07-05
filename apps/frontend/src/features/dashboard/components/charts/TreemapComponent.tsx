@@ -14,7 +14,6 @@ const CustomContent = ({
   width,
   height: h,
   name,
-  value,
   index,
   colors,
 }: any) => {

@@ -64,7 +64,7 @@ export const DatasetExplorer: React.FC<Props> = ({ datasetId }) => {
   const totalPages = data?.total_pages ?? 1;
 
   // Column visibility
-  const [hiddenCols, setHiddenCols] = React.useState<Set<string>>(new Set());
+  const [hiddenCols] = React.useState<Set<string>>(new Set());
   const visibleCols = columns.filter((c: string) => !hiddenCols.has(c));
 
   // Virtualizer for the rows

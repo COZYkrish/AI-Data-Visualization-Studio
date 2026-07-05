@@ -185,7 +185,10 @@ export const VisualizationPanel: React.FC<Props> = ({
                   onChange={(e) =>
                     setChartSettings(
                       chartSettings
-                        ? { ...chartSettings, x: e.target.value }
+                        ? {
+                            ...(chartSettings as import("../types").ChartSettings),
+                            x: e.target.value,
+                          }
                         : null,
                     )
                   }
@@ -208,7 +211,10 @@ export const VisualizationPanel: React.FC<Props> = ({
                   onChange={(e) =>
                     setChartSettings(
                       chartSettings
-                        ? { ...chartSettings, y: e.target.value }
+                        ? {
+                            ...(chartSettings as import("../types").ChartSettings),
+                            y: e.target.value,
+                          }
                         : null,
                     )
                   }

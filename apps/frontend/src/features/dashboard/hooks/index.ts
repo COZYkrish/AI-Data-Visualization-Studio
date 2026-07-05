@@ -5,9 +5,13 @@
  * cache invalidation, cancellation, and retry strategies.
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { dashboardApi } from "../../api/dashboard";
-import { useDashboardStore } from "../../store/dashboard.store";
-import type { ChartSettings, DashboardQueryRequest } from "../dashboard/types";
+import { dashboardApi } from "../../../api/dashboard";
+import { useDashboardStore } from "../../../store/dashboard.store";
+import type {
+  ChartSettings,
+  DashboardQueryRequest,
+  DashboardState,
+} from "../types";
 
 // ─── Query Keys ──────────────────────────────────────────────────────────────
 
@@ -145,10 +149,12 @@ export function useDashboardQuery(params: DashboardQueryRequest | null) {
  * Exposes the active filter state from the Zustand dashboard store.
  */
 export function useDashboardFilters() {
-  const activeFilters = useDashboardStore((s) => s.activeFilters);
-  const addFilter = useDashboardStore((s) => s.addFilter);
-  const removeFilter = useDashboardStore((s) => s.removeFilter);
-  const clearFilters = useDashboardStore((s) => s.clearFilters);
+  const activeFilters = useDashboardStore(
+    (s: DashboardState) => s.activeFilters,
+  );
+  const addFilter = useDashboardStore((s: DashboardState) => s.addFilter);
+  const removeFilter = useDashboardStore((s: DashboardState) => s.removeFilter);
+  const clearFilters = useDashboardStore((s: DashboardState) => s.clearFilters);
   return { activeFilters, addFilter, removeFilter, clearFilters };
 }
 

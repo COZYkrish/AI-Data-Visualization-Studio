@@ -3,7 +3,6 @@
  * Recharts doesn't have a native BoxPlot; we render with custom SVG shapes.
  */
 import * as React from "react";
-import { ResponsiveContainer } from "recharts";
 import type { ChartPayload } from "../../types";
 
 interface Props {
@@ -39,6 +38,7 @@ export const BoxPlotComponent: React.FC<Props> = ({
     whisker_high,
     outliers = [],
   } = stats;
+  const columnName = payload.columns?.[0] ?? "Column";
   const pad = 60;
   const svgH = height;
   const svgW = 300;
@@ -50,11 +50,7 @@ export const BoxPlotComponent: React.FC<Props> = ({
 
   return (
     <div className="flex justify-center" style={{ height }}>
-      <svg
-        width={svgW}
-        height={svgH}
-        aria-label={`Box plot for ${payload.column}`}
-      >
+      <svg width={svgW} height={svgH} aria-label={`Box plot for ${columnName}`}>
         {/* Whiskers */}
         <line
           x1={midX}
@@ -160,7 +156,7 @@ export const BoxPlotComponent: React.FC<Props> = ({
           fontSize={11}
           fill="var(--color-muted-foreground)"
         >
-          {payload.column}
+          {columnName}
         </text>
       </svg>
     </div>
