@@ -11,7 +11,6 @@ import {
 } from "@studio/ui";
 import {
   LayoutDashboard,
-  Upload,
   FolderKanban,
   Settings,
   Menu,

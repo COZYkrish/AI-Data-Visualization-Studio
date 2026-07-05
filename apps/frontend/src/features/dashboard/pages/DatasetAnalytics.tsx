@@ -83,7 +83,7 @@ export const DatasetAnalytics: React.FC = () => {
             </div>
             <div className="ml-auto flex gap-3 text-xs text-muted-foreground">
               {Object.entries(
-                Object.values(statistics.data_types ?? {}).reduce<
+                (Object.values(statistics.data_types ?? {}) as string[]).reduce<
                   Record<string, number>
                 >((acc, t) => {
                   acc[t] = (acc[t] ?? 0) + 1;

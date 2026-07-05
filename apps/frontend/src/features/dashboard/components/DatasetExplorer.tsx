@@ -65,7 +65,7 @@ export const DatasetExplorer: React.FC<Props> = ({ datasetId }) => {
 
   // Column visibility
   const [hiddenCols, setHiddenCols] = React.useState<Set<string>>(new Set());
-  const visibleCols = columns.filter((c) => !hiddenCols.has(c));
+  const visibleCols = columns.filter((c: string) => !hiddenCols.has(c));
 
   // Virtualizer for the rows
   const parentRef = React.useRef<HTMLDivElement>(null);
@@ -166,7 +166,7 @@ export const DatasetExplorer: React.FC<Props> = ({ datasetId }) => {
                 <th className="w-10 px-3 py-2.5 text-center font-semibold text-muted-foreground">
                   #
                 </th>
-                {visibleCols.map((col) => (
+                {visibleCols.map((col: string) => (
                   <th
                     key={col}
                     className="min-w-[120px] px-3 py-2.5 text-left font-semibold text-muted-foreground whitespace-nowrap"
@@ -208,7 +208,7 @@ export const DatasetExplorer: React.FC<Props> = ({ datasetId }) => {
                     <td className="px-3 py-2 text-center text-muted-foreground/60 select-none">
                       {(currentPage - 1) * pageSize + vRow.index + 1}
                     </td>
-                    {visibleCols.map((col) => (
+                    {visibleCols.map((col: string) => (
                       <td key={col} className="px-3 py-2 max-w-[200px]">
                         <span className="block truncate">
                           {row[col] == null ? (

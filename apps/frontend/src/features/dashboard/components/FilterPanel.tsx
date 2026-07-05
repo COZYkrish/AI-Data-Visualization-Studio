@@ -6,7 +6,6 @@ import * as React from "react";
 import { X, Plus, Filter, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDashboardFilters } from "../hooks";
-import { useDashboardStore } from "../../../store/dashboard.store";
 import type {
   FilterCondition,
   FilterOperator,
@@ -129,7 +128,7 @@ export const FilterPanel: React.FC<Props> = ({ statistics }) => {
                       Clear all
                     </button>
                   </div>
-                  {activeFilters.map((f) => (
+                  {activeFilters.map((f: FilterCondition) => (
                     <motion.div
                       key={f.id}
                       initial={{ opacity: 0, x: -10 }}
@@ -223,7 +222,10 @@ export const FilterPanel: React.FC<Props> = ({ statistics }) => {
                           newFilter.value != null ? String(newFilter.value) : ""
                         }
                         onChange={(e) =>
-                          setNewFilter((f) => ({ ...f, value: e.target.value }))
+                          setNewFilter((prev: Partial<FilterCondition>) => ({
+                            ...prev,
+                            value: e.target.value,
+                          }))
                         }
                         placeholder="Value…"
                         className="rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
