@@ -109,8 +109,17 @@ export const router = createBrowserRouter([
             ],
           },
           {
-            path: "analytics/:id",
-            element: <DatasetAnalytics />,
+            path: "analytics",
+            children: [
+              {
+                index: true,
+                element: <Dashboard />,
+              },
+              {
+                path: ":id",
+                element: <DatasetAnalytics />,
+              },
+            ],
           },
           {
             path: "saved",
