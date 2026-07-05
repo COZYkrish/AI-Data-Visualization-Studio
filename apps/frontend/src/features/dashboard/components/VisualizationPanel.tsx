@@ -3,24 +3,13 @@
  */
 import * as React from "react";
 import { motion } from "framer-motion";
-import {
-  BarChart2,
-  Lightbulb,
-  Settings2,
-  Download,
-  Maximize2,
-  Minimize2,
-} from "lucide-react";
+import { BarChart2, Lightbulb, Maximize2, Minimize2 } from "lucide-react";
 import { useChartRecommendations, useCharts } from "../hooks";
 import { useDashboardStore } from "../../../store/dashboard.store";
 import { ChartRenderer } from "./charts/ChartRenderer";
 import { ChartToolbar } from "./ChartToolbar";
 import { LoadingSkeleton } from "./LoadingSkeleton";
-import type {
-  ChartRecommendation,
-  ChartSettings,
-  DatasetStatistics,
-} from "../types";
+import type { ChartRecommendation, DatasetStatistics } from "../types";
 
 const CHART_TYPE_LABELS: Record<string, string> = {
   bar: "Bar",
@@ -104,32 +93,34 @@ export const VisualizationPanel: React.FC<Props> = ({
               categorical columns.
             </p>
           ) : (
-            recommendations.slice(0, 12).map((rec, i) => (
-              <motion.button
-                key={`${rec.chart_type}-${i}`}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.04 }}
-                onClick={() => handleRecommendationClick(rec)}
-                title={rec.reason}
-                className={`shrink-0 flex flex-col items-center gap-1.5 rounded-xl border px-4 py-2.5 text-xs font-medium transition-all duration-200 cursor-pointer ${
-                  chartSettings?.type === rec.chart_type &&
-                  chartSettings?.x === rec.x &&
-                  chartSettings?.y === rec.y
-                    ? "border-primary bg-primary/10 text-primary shadow-sm"
-                    : "border-border bg-background hover:border-primary/50 hover:bg-accent"
-                }`}
-                aria-label={rec.title}
-              >
-                <BarChart2 className="h-4 w-4" />
-                <span>
-                  {CHART_TYPE_LABELS[rec.chart_type] ?? rec.chart_type}
-                </span>
-                <span className="text-[9px] opacity-60 max-w-[80px] truncate">
-                  {rec.title}
-                </span>
-              </motion.button>
-            ))
+            recommendations
+              .slice(0, 12)
+              .map((rec: ChartRecommendation, i: number) => (
+                <motion.button
+                  key={`${rec.chart_type}-${i}`}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.04 }}
+                  onClick={() => handleRecommendationClick(rec)}
+                  title={rec.reason}
+                  className={`shrink-0 flex flex-col items-center gap-1.5 rounded-xl border px-4 py-2.5 text-xs font-medium transition-all duration-200 cursor-pointer ${
+                    chartSettings?.type === rec.chart_type &&
+                    chartSettings?.x === rec.x &&
+                    chartSettings?.y === rec.y
+                      ? "border-primary bg-primary/10 text-primary shadow-sm"
+                      : "border-border bg-background hover:border-primary/50 hover:bg-accent"
+                  }`}
+                  aria-label={rec.title}
+                >
+                  <BarChart2 className="h-4 w-4" />
+                  <span>
+                    {CHART_TYPE_LABELS[rec.chart_type] ?? rec.chart_type}
+                  </span>
+                  <span className="text-[9px] opacity-60 max-w-[80px] truncate">
+                    {rec.title}
+                  </span>
+                </motion.button>
+              ))
           )}
         </div>
       </div>
@@ -192,8 +183,10 @@ export const VisualizationPanel: React.FC<Props> = ({
                 </label>
                 <select
                   onChange={(e) =>
-                    setChartSettings((prev) =>
-                      prev ? { ...prev, x: e.target.value } : null,
+                    setChartSettings(
+                      chartSettings
+                        ? { ...chartSettings, x: e.target.value }
+                        : null,
                     )
                   }
                   className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/40"
@@ -213,8 +206,10 @@ export const VisualizationPanel: React.FC<Props> = ({
                 </label>
                 <select
                   onChange={(e) =>
-                    setChartSettings((prev) =>
-                      prev ? { ...prev, y: e.target.value } : null,
+                    setChartSettings(
+                      chartSettings
+                        ? { ...chartSettings, y: e.target.value }
+                        : null,
                     )
                   }
                   className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/40"
