@@ -11,12 +11,7 @@ import { LoadingSkeleton } from "../components/LoadingSkeleton";
 import { ErrorState } from "../components/ErrorState";
 import { useDatasetStatistics } from "../hooks";
 import { useDashboardStore } from "../../../store/dashboard.store";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "../../../../packages/ui/Tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@studio/ui";
 import { AnalyticsOverview } from "../../analytics/components/AnalyticsOverview";
 
 export const DatasetAnalytics: React.FC = () => {
