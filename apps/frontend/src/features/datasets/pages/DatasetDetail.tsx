@@ -8,10 +8,14 @@ import { format } from "date-fns";
 
 export const DatasetDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: dataset, isLoading: isDatasetLoading } = useDataset(id!);
-  const { data: previewData, isLoading: isPreviewLoading } = useDatasetPreview(
+  const { data: datasetResponse, isLoading: isDatasetLoading } = useDataset(
     id!,
   );
+  const { data: previewResponse, isLoading: isPreviewLoading } =
+    useDatasetPreview(id!);
+
+  const dataset = datasetResponse?.data;
+  const previewData = previewResponse?.data;
 
   if (isDatasetLoading) {
     return (
@@ -47,12 +51,14 @@ export const DatasetDetail = () => {
           </Link>
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold tracking-tight">
-              {dataset.name}
+              {dataset.original_filename}
             </h1>
             <Badge
-              variant={dataset.status === "ready" ? "default" : "secondary"}
+              variant={
+                dataset.upload_status === "ready" ? "default" : "secondary"
+              }
             >
-              {dataset.status.toUpperCase()}
+              {dataset.upload_status.toUpperCase()}
             </Badge>
           </div>
           <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
@@ -62,7 +68,7 @@ export const DatasetDetail = () => {
             </span>
             <span className="flex items-center gap-1">
               <FileType className="w-4 h-4" />
-              {dataset.format.toUpperCase()}
+              {dataset.file_type.toUpperCase()}
             </span>
           </div>
         </div>
@@ -80,10 +86,10 @@ export const DatasetDetail = () => {
       </div>
 
       {/* Content */}
-      {dataset.status === "ready" && dataset.metadata ? (
+      {dataset.upload_status === "ready" && dataset.metadata ? (
         <>
           <h2 className="text-xl font-semibold mb-4">Overview</h2>
-          <DatasetStatistics metadata={dataset.metadata} />
+          <DatasetStatistics dataset={dataset} metadata={dataset.metadata} />
 
           <div className="flex justify-between items-end mb-4 mt-8">
             <h2 className="text-xl font-semibold">Data Preview</h2>
@@ -96,9 +102,9 @@ export const DatasetDetail = () => {
             <Skeleton className="h-[500px] w-full" />
           ) : (
             <DatasetPreview
-              data={previewData?.data || []}
+              data={previewData?.rows || []}
               columns={previewData?.columns || []}
-              dataTypes={dataset.metadata.data_types}
+              dataTypes={dataset.metadata.detected_data_types}
             />
           )}
         </>
@@ -106,7 +112,8 @@ export const DatasetDetail = () => {
         <div className="bg-muted/30 border rounded-xl p-12 text-center">
           <h3 className="text-lg font-medium mb-2">Dataset is processing</h3>
           <p className="text-muted-foreground">
-            Current status: {dataset.status}. Please check back in a moment.
+            Current status: {dataset.upload_status}. Please check back in a
+            moment.
           </p>
         </div>
       )}

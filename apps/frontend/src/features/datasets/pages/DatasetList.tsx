@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 
 export const DatasetList = () => {
-  const { data: datasets, isLoading } = useDatasets();
+  const { data: datasetsResponse, isLoading } = useDatasets();
 
   const formatBytes = (bytes: number) => {
     if (!+bytes) return "0 Bytes";
@@ -55,7 +55,8 @@ export const DatasetList = () => {
             </Card>
           ))}
         </div>
-      ) : !datasets || datasets.length === 0 ? (
+      ) : !datasetsResponse?.data?.items ||
+        datasetsResponse.data.items.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center border rounded-xl bg-card border-dashed">
           <div className="bg-primary/10 p-4 rounded-full mb-4">
             <Database className="w-8 h-8 text-primary" />
@@ -71,7 +72,7 @@ export const DatasetList = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {datasets.map((dataset) => (
+          {datasetsResponse.data.items.map((dataset) => (
             <Link
               key={dataset.id}
               to={`/dashboard/datasets/${dataset.id}`}
@@ -83,28 +84,26 @@ export const DatasetList = () => {
                   <div className="flex justify-between items-start mb-2">
                     <Badge
                       variant={
-                        dataset.status === "ready"
+                        dataset.upload_status === "ready"
                           ? "default"
-                          : dataset.status === "failed"
+                          : dataset.upload_status === "failed"
                             ? "destructive"
                             : "secondary"
                       }
                       className="text-[10px]"
                     >
-                      {dataset.status.toUpperCase()}
+                      {dataset.upload_status.toUpperCase()}
                     </Badge>
                   </div>
                   <CardTitle className="text-lg line-clamp-1 group-hover:text-primary transition-colors">
-                    {dataset.name}
+                    {dataset.original_filename}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <FileSpreadsheet className="w-4 h-4" />
-                      {dataset.metadata?.cleaning_stats?.rows_after?.toLocaleString() ||
-                        0}{" "}
-                      rows
+                      {dataset.row_count?.toLocaleString() || 0} rows
                     </div>
                     <div className="flex items-center gap-2">
                       <HardDrive className="w-4 h-4" />

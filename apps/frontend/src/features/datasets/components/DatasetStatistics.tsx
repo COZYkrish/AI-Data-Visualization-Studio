@@ -1,17 +1,19 @@
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent, Badge } from "@studio/ui";
 import { Database, FileDigit, HardDrive, AlertTriangle } from "lucide-react";
-import { DatasetMetadata } from "../types";
+import { Dataset, DatasetMetadata } from "../types";
 
 interface DatasetStatisticsProps {
+  dataset: Dataset;
   metadata: DatasetMetadata;
 }
 
 export const DatasetStatistics: React.FC<DatasetStatisticsProps> = ({
+  dataset,
   metadata,
 }) => {
-  const formatBytes = (bytes: number, decimals = 2) => {
-    if (!+bytes) return "0 Bytes";
+  const formatBytes = (bytes: number | null, decimals = 2) => {
+    if (!bytes) return "0 Bytes";
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
@@ -19,9 +21,15 @@ export const DatasetStatistics: React.FC<DatasetStatisticsProps> = ({
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
   };
 
-  const totalMissing = Object.values(
-    metadata.cleaning_stats.missing_values_before,
-  ).reduce((a: any, b: any) => a + b, 0) as number;
+  const totalMissing = metadata.missing_values
+    ? (Object.values(metadata.missing_values).reduce(
+        (a: any, b: any) => a + b,
+        0,
+      ) as number)
+    : 0;
+
+  const dataTypes = metadata.detected_data_types || {};
+  const dataTypesValues = Object.values(dataTypes) as React.ReactNode[];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -32,12 +40,9 @@ export const DatasetStatistics: React.FC<DatasetStatisticsProps> = ({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {metadata.cleaning_stats.rows_before.toLocaleString()}
+            {dataset.row_count ? dataset.row_count.toLocaleString() : "0"}
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            After cleaning:{" "}
-            {metadata.cleaning_stats.rows_after.toLocaleString()}
-          </p>
+          <p className="text-xs text-muted-foreground mt-1">Processed rows</p>
         </CardContent>
       </Card>
 
@@ -47,22 +52,20 @@ export const DatasetStatistics: React.FC<DatasetStatisticsProps> = ({
           <FileDigit className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{metadata.columns.length}</div>
+          <div className="text-2xl font-bold">{dataset.column_count || 0}</div>
           <div className="flex gap-1 mt-1 flex-wrap">
-            {Object.values(metadata.data_types)
-              .slice(0, 3)
-              .map((type, i) => (
-                <Badge
-                  key={i}
-                  variant="secondary"
-                  className="text-[10px] px-1 py-0"
-                >
-                  {type}
-                </Badge>
-              ))}
-            {Object.values(metadata.data_types).length > 3 && (
+            {dataTypesValues.slice(0, 3).map((type, i) => (
+              <Badge
+                key={i}
+                variant="secondary"
+                className="text-[10px] px-1 py-0"
+              >
+                {type}
+              </Badge>
+            ))}
+            {dataTypesValues.length > 3 && (
               <span className="text-xs text-muted-foreground ml-1">
-                +{Object.values(metadata.data_types).length - 3}
+                +{dataTypesValues.length - 3}
               </span>
             )}
           </div>
