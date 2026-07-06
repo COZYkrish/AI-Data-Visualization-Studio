@@ -12,7 +12,7 @@ export const useAnalytics = (datasetId: string | undefined) => {
     queryFn: () => analyticsService.getAnalytics(datasetId!),
     enabled: !!datasetId,
     staleTime: Infinity, // Analytics don't change unless refreshed
-    cacheTime: 1000 * 60 * 60, // Keep in cache for 1 hour
+    gcTime: 1000 * 60 * 60, // Keep in cache for 1 hour
     retry: 1,
   });
 };
