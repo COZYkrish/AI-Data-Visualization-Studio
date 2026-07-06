@@ -1,11 +1,7 @@
-/**
- * DatasetAnalytics — Full per-dataset analytics workspace
- * Deep-dive into a specific dataset with full-page charts, stats, and explorer.
- */
 import * as React from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Database } from "lucide-react";
+import { ArrowLeft, Database, BarChart2, Lightbulb } from "lucide-react";
 import { KPIEngine } from "../components/KPIEngine";
 import { VisualizationPanel } from "../components/VisualizationPanel";
 import { DatasetExplorer } from "../components/DatasetExplorer";
@@ -15,6 +11,13 @@ import { LoadingSkeleton } from "../components/LoadingSkeleton";
 import { ErrorState } from "../components/ErrorState";
 import { useDatasetStatistics } from "../hooks";
 import { useDashboardStore } from "../../../store/dashboard.store";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "../../../../packages/ui/Tabs";
+import { AnalyticsOverview } from "../../analytics/components/AnalyticsOverview";
 
 export const DatasetAnalytics: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -102,17 +105,36 @@ export const DatasetAnalytics: React.FC = () => {
       {/* KPIs */}
       <KPIEngine datasetId={id} />
 
-      {/* Main Layout */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <VisualizationPanel datasetId={id} statistics={statistics} />
-          <DatasetExplorer datasetId={id} />
-        </div>
-        <div className="space-y-4">
-          <FilterPanel statistics={statistics} />
-          {statistics && <QuickStatsCard statistics={statistics} />}
-        </div>
-      </div>
+      {/* Main Layout wrapped in Tabs */}
+      <Tabs defaultValue="visualize">
+        <TabsList className="mb-4">
+          <TabsTrigger value="visualize" className="flex items-center gap-2">
+            <BarChart2 className="w-4 h-4" />
+            Visualization & Explorer
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <Lightbulb className="w-4 h-4" />
+            Analytics & Insights
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="visualize" className="mt-0 outline-none">
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <VisualizationPanel datasetId={id} statistics={statistics} />
+              <DatasetExplorer datasetId={id} />
+            </div>
+            <div className="space-y-4">
+              <FilterPanel statistics={statistics} />
+              {statistics && <QuickStatsCard statistics={statistics} />}
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="analytics" className="mt-0 outline-none">
+          <AnalyticsOverview datasetId={id} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
