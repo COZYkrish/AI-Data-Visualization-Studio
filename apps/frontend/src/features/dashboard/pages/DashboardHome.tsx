@@ -25,7 +25,7 @@ import { QuickStatsCard } from "../components/QuickStatsCard";
 import { EmptyState } from "../components/EmptyState";
 import { LoadingSkeleton } from "../components/LoadingSkeleton";
 import { useDatasetStatistics } from "../hooks";
-import { formatBytes } from "../utils";
+import { formatBytes } from "@/features/dashboard/utils";
 
 export const DashboardHome: React.FC = () => {
   const { data: overview, isLoading: overviewLoading } = useDashboard();
