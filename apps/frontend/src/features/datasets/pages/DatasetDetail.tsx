@@ -104,7 +104,7 @@ export const DatasetDetail = () => {
             <DatasetPreview
               data={previewData?.rows || []}
               columns={previewData?.columns || []}
-              dataTypes={dataset.metadata.detected_data_types}
+              dataTypes={dataset.metadata.detected_data_types || undefined}
             />
           )}
         </>
