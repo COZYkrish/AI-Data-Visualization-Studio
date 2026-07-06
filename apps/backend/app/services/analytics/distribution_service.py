@@ -26,17 +26,17 @@ class DistributionService:
             duplicate_percentage = 100 - ((unique_values / n) * 100) if n > 0 else 0
             
             if is_numeric:
-                mean = series.mean()
-                median = series.median()
-                mode = series.mode().iloc[0] if not series.mode().empty else None
-                variance = series.var()
-                std_dev = series.std()
-                minimum = series.min()
-                maximum = series.max()
-                data_range = maximum - minimum
-                q1 = series.quantile(0.25)
-                q2 = median
-                q3 = series.quantile(0.75)
+                mean: Any = series.mean()
+                median: Any = series.median()
+                mode: Any = series.mode().iloc[0] if not series.mode().empty else None
+                variance: Any = series.var()
+                std_dev: Any = series.std()
+                minimum: Any = series.min()
+                maximum: Any = series.max()
+                data_range: Any = maximum - minimum
+                q1: Any = series.quantile(0.25)
+                q2: Any = median
+                q3: Any = series.quantile(0.75)
                 
                 # Skewness and Kurtosis
                 skew_val = float(skew(series, nan_policy='omit')) if n > 2 else 0.0
