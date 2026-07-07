@@ -92,7 +92,7 @@ def delete_dataset(
     import os
     from app.services.dataset_service import UPLOAD_DIR
     
-    stored_filepath = os.path.join(UPLOAD_DIR, dataset.stored_filename)
+    stored_filepath = os.path.join(UPLOAD_DIR, str(dataset.stored_filename))
     if os.path.exists(stored_filepath):
         os.remove(stored_filepath)
         
