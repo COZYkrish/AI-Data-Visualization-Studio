@@ -6,3 +6,10 @@ from app.models.password_reset import PasswordResetToken
 from app.models.project import Project
 from app.models.dataset import Dataset, DatasetMetadata, ProcessingJob
 from app.models.analytics import AnalyticsResult
+from app.models.machine_learning import (
+    MLModel,
+    MLModelRun,
+    MLPrediction,
+    MLForecast,
+    MLEvaluationResult,
+)
