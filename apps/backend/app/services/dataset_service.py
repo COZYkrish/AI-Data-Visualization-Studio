@@ -124,7 +124,7 @@ class DatasetService:
         if not os.path.exists(stored_filepath):
             raise HTTPException(status_code=404, detail="Dataset file missing from storage")
             
-        df = parse_file(stored_filepath, dataset.file_type, dataset.original_filename)
+        df = parse_file(stored_filepath, str(dataset.file_type), str(dataset.original_filename))
         # Apply cleaning to ensure consistency with DB metadata
         df, _ = clean_dataset(df)
         
@@ -136,11 +136,11 @@ class DatasetService:
         if not dataset:
             raise HTTPException(status_code=404, detail="Dataset not found")
             
-        stored_filepath = os.path.join(UPLOAD_DIR, dataset.stored_filename)
+        stored_filepath = os.path.join(UPLOAD_DIR, str(dataset.stored_filename))
         if not os.path.exists(stored_filepath):
             raise HTTPException(status_code=404, detail="Dataset file missing from storage")
             
-        df = parse_file(stored_filepath, dataset.file_type, dataset.original_filename)
+        df = parse_file(stored_filepath, str(dataset.file_type), str(dataset.original_filename))
         df, _ = clean_dataset(df)
         data_types = detect_data_types(df)
         stats = generate_statistics(df, data_types)
