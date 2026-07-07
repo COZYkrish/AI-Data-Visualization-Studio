@@ -73,13 +73,13 @@ def get_sessions(current_user = Depends(get_current_active_user), db: Session = 
     response_data = []
     for s in sessions:
         response_data.append(SessionResponse(
-            id=s.id,
-            device_name=s.device_name,
-            browser=s.browser,
-            operating_system=s.operating_system,
-            ip_address=s.ip_address,
-            created_at=s.created_at,
-            last_active=s.created_at,  # Can add a last_active column later
+            id=str(s.id),
+            device_name=str(s.device_name) if s.device_name else None,
+            browser=str(s.browser) if s.browser else None,
+            operating_system=str(s.operating_system) if s.operating_system else None,
+            ip_address=str(s.ip_address) if s.ip_address else None,
+            created_at=s.created_at,  # type: ignore
+            last_active=s.created_at,  # type: ignore
             is_current=False # Ideally set this true if it matches current request, but requires request context
         ))
     
