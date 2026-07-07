@@ -29,6 +29,7 @@ import {
   DatasetDetail,
   DatasetUpload,
 } from "../features/datasets/pages";
+import { MLWorkspace } from "../features/machine-learning/pages/MLWorkspace";
 export const router = createBrowserRouter([
   // Public Landing Routes
   {
@@ -124,6 +125,10 @@ export const router = createBrowserRouter([
           {
             path: "saved",
             element: <SavedDashboards />,
+          },
+          {
+            path: "ml",
+            element: <MLWorkspace />,
           },
           {
             path: "projects",

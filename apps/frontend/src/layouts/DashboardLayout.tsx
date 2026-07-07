@@ -22,6 +22,7 @@ import {
   User as UserIcon,
   BarChart2,
   Star,
+  BrainCircuit,
 } from "lucide-react";
 
 export const DashboardLayout: React.FC = () => {
@@ -38,6 +39,7 @@ export const DashboardLayout: React.FC = () => {
   const menuItems = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { name: "Datasets", path: "/dashboard/datasets", icon: Database },
+    { name: "Machine Learning", path: "/dashboard/ml", icon: BrainCircuit },
     { name: "Analytics", path: "/dashboard/analytics", icon: BarChart2 },
     { name: "Saved", path: "/dashboard/saved", icon: Star },
     { name: "Projects", path: "/dashboard/projects", icon: FolderKanban },
