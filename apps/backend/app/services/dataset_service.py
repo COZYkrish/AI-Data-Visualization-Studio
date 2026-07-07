@@ -51,15 +51,15 @@ class DatasetService:
         
         # 3. Create initial DB records
         dataset_create = DatasetCreate(
-            original_filename=file.filename,
+            original_filename=file.filename or "unknown",
             stored_filename=stored_filename,
-            file_type=file.content_type,
+            file_type=file.content_type or "application/octet-stream",
             file_size=file_size,
             user_id=user_id
         )
         dataset = self.repository.create(user_id, dataset_create)
-        metadata_record = self.repository.create_metadata(dataset.id)
-        job = self.repository.create_job(dataset.id)
+        metadata_record = self.repository.create_metadata(str(dataset.id))
+        job = self.repository.create_job(str(dataset.id))
         
         try:
             # Update status
@@ -67,7 +67,7 @@ class DatasetService:
             self.repository.update_job(job, {"status": JobStatus.IN_PROGRESS})
             
             # 4. Parsing
-            df = parse_file(stored_filepath, file.content_type, file.filename)
+            df = parse_file(stored_filepath, file.content_type or "", file.filename or "")
             
             self.repository.update(dataset, DatasetUpdate(upload_status=UploadStatus.CLEANING, upload_progress=30))
             
@@ -120,7 +120,7 @@ class DatasetService:
         if not dataset:
             raise HTTPException(status_code=404, detail="Dataset not found")
             
-        stored_filepath = os.path.join(UPLOAD_DIR, dataset.stored_filename)
+        stored_filepath = os.path.join(UPLOAD_DIR, str(dataset.stored_filename))
         if not os.path.exists(stored_filepath):
             raise HTTPException(status_code=404, detail="Dataset file missing from storage")
             
