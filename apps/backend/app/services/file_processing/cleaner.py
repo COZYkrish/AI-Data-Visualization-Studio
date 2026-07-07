@@ -25,7 +25,7 @@ def detect_missing_values(df: pd.DataFrame) -> Dict[str, int]:
     # Replace empty strings or whitespace-only strings with NaN for counting
     temp_df = df.replace(r'^\s*$', pd.NA, regex=True)
     missing = temp_df.isna().sum()
-    return missing[missing > 0].to_dict()
+    return {str(k): int(v) for k, v in missing[missing > 0].items()}
 
 def handle_missing_values(df: pd.DataFrame, strategy: str = "keep") -> pd.DataFrame:
     """Configurable handling of missing values. Currently defaults to 'keep'."""
@@ -42,7 +42,7 @@ def handle_missing_values(df: pd.DataFrame, strategy: str = "keep") -> pd.DataFr
 
 def clean_dataset(df: pd.DataFrame) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """Runs the complete cleaning pipeline and returns cleaned DF and cleaning stats."""
-    stats = {}
+    stats: Dict[str, Any] = {}
     
     # 1. Standardize columns
     df = standardize_column_names(df)

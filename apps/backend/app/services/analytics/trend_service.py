@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from typing import Dict, Any, List
+from typing import Dict, Any, List, cast
 from app.schemas.analytics import TrendResult
 
 class TrendService:
@@ -57,7 +57,7 @@ class TrendService:
                 seasonality_indicators={}
             )
 
-        numeric_cols = df_temp.select_dtypes(include=[np.number]).columns
+        numeric_cols = df_temp.select_dtypes(include=['number']).columns
 
         for col in numeric_cols:
             if col == time_col:
@@ -88,11 +88,11 @@ class TrendService:
             y = series.values
             
             if len(x) > 1:
-                slope, _ = np.polyfit(x, y, 1)
+                slope, _ = np.polyfit(np.array(x, dtype=float), np.array(y, dtype=float), 1)
                 
                 # Normalize slope to a percentage growth over the whole period
                 period_days = max(1, x.max() - x.min())
-                start_val = y.mean() # approximation
+                start_val = float(np.mean(np.array(y, dtype=float))) # approximation
                 
                 if start_val != 0:
                     total_growth_pct = (slope * period_days / start_val) * 100
@@ -112,8 +112,8 @@ class TrendService:
                     decreasing_trends.append(trend_item)
 
         # Sort trends by magnitude
-        increasing_trends.sort(key=lambda x: x["growth_percentage"], reverse=True)
-        decreasing_trends.sort(key=lambda x: x["growth_percentage"])
+        increasing_trends.sort(key=lambda x: cast(float, x["growth_percentage"]), reverse=True)
+        decreasing_trends.sort(key=lambda x: cast(float, x["growth_percentage"]))
 
         return TrendResult(
             increasing_trends=increasing_trends,

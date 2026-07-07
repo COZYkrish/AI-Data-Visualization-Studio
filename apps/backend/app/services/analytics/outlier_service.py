@@ -2,14 +2,14 @@ import pandas as pd
 import numpy as np
 from typing import Dict, Any, List
 from app.schemas.analytics import OutlierResult
-from scipy.stats import median_abs_deviation
+from scipy.stats import median_abs_deviation  # type: ignore
 
 class OutlierService:
     def __init__(self):
         pass
 
     def analyze(self, df: pd.DataFrame) -> OutlierResult:
-        numeric_cols = df.select_dtypes(include=[np.number]).columns
+        numeric_cols = df.select_dtypes(include=['number']).columns
         
         if len(numeric_cols) == 0:
             return OutlierResult(

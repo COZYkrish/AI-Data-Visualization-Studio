@@ -6,7 +6,7 @@ from Pandas DataFrames. Each method has a single responsibility.
 """
 import os
 import structlog
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, cast
 import pandas as pd
 import numpy as np
 
@@ -125,7 +125,7 @@ class AggregationService:
             grouped.columns = ["label", "value"]
 
         grouped = grouped.head(limit)
-        return grouped.to_dict(orient="records")
+        return cast(List[Dict[str, Any]], grouped.to_dict(orient="records"))
 
     def value_frequencies(self, df: pd.DataFrame, column: str, limit: int = 30) -> List[Dict[str, Any]]:
         """Returns frequency distribution for a categorical column."""
@@ -134,7 +134,7 @@ class AggregationService:
         freq = df[column].value_counts(normalize=False).head(limit).reset_index()
         freq.columns = ["label", "count"]
         freq["percentage"] = (freq["count"] / len(df) * 100).round(2)
-        return freq.to_dict(orient="records")
+        return cast(List[Dict[str, Any]], freq.to_dict(orient="records"))
 
     def histogram_bins(
         self, df: pd.DataFrame, column: str, bins: int = 20
@@ -170,7 +170,7 @@ class AggregationService:
         if len(sub) > sample_size:
             sub = sub.sample(sample_size, random_state=42)
         records = sub.to_dict(orient="records")
-        return [{k: (v.item() if hasattr(v, "item") else v) for k, v in r.items()} for r in records]
+        return [{str(k): (v.item() if hasattr(v, "item") else v) for k, v in r.items()} for r in records]
 
     def time_series_data(
         self,
@@ -200,7 +200,7 @@ class AggregationService:
             resampled = sub[value_col].resample(freq).mean().dropna().reset_index()
             resampled.columns = ["date", "value"]
             resampled["date"] = resampled["date"].dt.strftime("%Y-%m-%d")
-            return resampled.to_dict(orient="records")
+            return cast(List[Dict[str, Any]], resampled.to_dict(orient="records"))
         except Exception as e:
             logger.warning("time_series_aggregation_failed", error=str(e))
             return []

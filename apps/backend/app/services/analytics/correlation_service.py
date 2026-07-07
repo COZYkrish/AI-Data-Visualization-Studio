@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, List, Tuple, cast
 from app.schemas.analytics import CorrelationResult
 
 class CorrelationService:
@@ -9,7 +9,7 @@ class CorrelationService:
 
     def analyze(self, df: pd.DataFrame) -> CorrelationResult:
         # Filter for numeric columns only
-        numeric_df = df.select_dtypes(include=[np.number])
+        numeric_df = df.select_dtypes(include=['number'])
         
         if numeric_df.empty or numeric_df.shape[1] < 2:
             return CorrelationResult(
@@ -21,9 +21,9 @@ class CorrelationService:
 
         # Calculate matrices
         # Fill NA temporarily for correlation calculation if needed, but corr() handles it pairwise usually
-        pearson_matrix = numeric_df.corr(method='pearson').fillna(0).to_dict()
-        spearman_matrix = numeric_df.corr(method='spearman').fillna(0).to_dict()
-        covariance_matrix = numeric_df.cov().fillna(0).to_dict()
+        pearson_matrix = cast(Dict[str, Dict[str, float]], numeric_df.corr(method='pearson').fillna(0).to_dict())
+        spearman_matrix = cast(Dict[str, Dict[str, float]], numeric_df.corr(method='spearman').fillna(0).to_dict())
+        covariance_matrix = cast(Dict[str, Dict[str, float]], numeric_df.cov().fillna(0).to_dict())
 
         # Find strong correlations
         strong_correlations = self._extract_strong_correlations(pearson_matrix, method="Pearson")
@@ -71,7 +71,7 @@ class CorrelationService:
         
     def _deduplicate_correlations(self, correlations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         # Map pair tuple (sorted) to max score correlation
-        best_corrs = {}
+        best_corrs: Dict[Tuple[str, str], Dict[str, Any]] = {}
         for c in correlations:
             pair = tuple(sorted([c["col1"], c["col2"]]))
             if pair not in best_corrs or abs(c["score"]) > abs(best_corrs[pair]["score"]):
