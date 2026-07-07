@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from typing import Dict, Any, List
+from typing import Dict, Any, List, cast
 from app.schemas.analytics import OutlierResult
 from scipy.stats import median_abs_deviation  # type: ignore
 
@@ -9,7 +9,7 @@ class OutlierService:
         pass
 
     def analyze(self, df: pd.DataFrame) -> OutlierResult:
-        numeric_cols = df.select_dtypes(include='number').columns
+        numeric_cols = cast(pd.DataFrame, df.select_dtypes(include='number')).columns
         
         if len(numeric_cols) == 0:
             return OutlierResult(
@@ -50,7 +50,7 @@ class OutlierService:
             #     outliers_mz = pd.Series(dtype=float)
             
             # Use IQR for now as primary indicator
-            col_outliers = outliers_iqr
+            col_outliers = cast(pd.Series, outliers_iqr)
             
             if not col_outliers.empty:
                 affected_columns.append(col)

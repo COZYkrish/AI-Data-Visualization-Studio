@@ -207,7 +207,7 @@ class AggregationService:
 
     def correlation_matrix(self, df: pd.DataFrame, columns: Optional[List[str]] = None) -> Dict[str, Any]:
         """Computes pairwise correlation matrix for numeric columns."""
-        numeric_df = df.select_dtypes(include=[np.number])
+        numeric_df = df.select_dtypes(include='number')
         if columns:
             valid = [c for c in columns if c in numeric_df.columns]
             numeric_df = numeric_df[valid]

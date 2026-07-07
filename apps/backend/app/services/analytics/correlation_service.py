@@ -9,7 +9,7 @@ class CorrelationService:
 
     def analyze(self, df: pd.DataFrame) -> CorrelationResult:
         # Filter for numeric columns only
-        numeric_df = df.select_dtypes(include=['number'])
+        numeric_df = df.select_dtypes(include='number')
         
         if numeric_df.empty or numeric_df.shape[1] < 2:
             return CorrelationResult(

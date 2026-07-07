@@ -38,7 +38,7 @@ class DatasetService:
         validate_upload_file(file)
         
         # 2. Temporary Storage
-        file_ext = os.path.splitext(file.filename)[1].lower()
+        file_ext = os.path.splitext(file.filename or "")[1].lower()
         unique_id = str(uuid.uuid4())
         stored_filename = f"{unique_id}{file_ext}"
         stored_filepath = os.path.join(UPLOAD_DIR, stored_filename)

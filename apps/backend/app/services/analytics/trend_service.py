@@ -57,7 +57,7 @@ class TrendService:
                 seasonality_indicators={}
             )
 
-        numeric_cols = df_temp.select_dtypes(include=['number']).columns
+        numeric_cols = df_temp.select_dtypes(include='number').columns
 
         for col in numeric_cols:
             if col == time_col:
