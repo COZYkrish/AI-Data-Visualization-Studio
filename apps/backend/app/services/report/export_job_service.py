@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from app.models.report import ExportJob, ExportFormat, ExportStatus
 
 class ExportJobService:
-    def create_job(self, db: Session, project_id: str, format: ExportFormat, report_id: str = None) -> ExportJob:
+    def create_job(self, db: Session, project_id: str, format: ExportFormat, report_id: str | None = None) -> ExportJob:
         job = ExportJob(
             project_id=project_id,
             report_id=report_id,
@@ -23,7 +23,7 @@ class ExportJobService:
             raise HTTPException(status_code=404, detail="Export job not found")
         return job
 
-    def update_job_status(self, db: Session, job_id: str, status: ExportStatus, file_url: str = None, error_message: str = None) -> ExportJob:
+    def update_job_status(self, db: Session, job_id: str, status: ExportStatus, file_url: str | None = None, error_message: str | None = None) -> ExportJob:
         job = self.get_job(db, job_id)
         job.status = status
         

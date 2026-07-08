@@ -1,9 +1,9 @@
-from typing import List
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from app.models.project_history import ProjectHistory
 
 class ProjectHistoryService:
-    def record_history(self, db: Session, project_id: str, version: int, action: str, description: str = None) -> ProjectHistory:
+    def record_history(self, db: Session, project_id: str, version: int, action: str, description: Optional[str] = None) -> ProjectHistory:
         history = ProjectHistory(
             project_id=project_id,
             version=version,

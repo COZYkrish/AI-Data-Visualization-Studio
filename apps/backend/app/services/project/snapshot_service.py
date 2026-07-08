@@ -5,7 +5,7 @@ from app.models.project import Project
 from app.models.project_history import ProjectSnapshot
 
 class SnapshotService:
-    def create_snapshot(self, db: Session, project: Project, name: str, description: str = None) -> ProjectSnapshot:
+    def create_snapshot(self, db: Session, project: Project, name: str, description: str | None = None) -> ProjectSnapshot:
         snapshot = ProjectSnapshot(
             project_id=project.id,
             name=name,
