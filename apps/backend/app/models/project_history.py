@@ -1,33 +1,42 @@
-import uuid
 from datetime import datetime
-from typing import Optional, List, Dict, Any
-from sqlalchemy import String, Boolean, DateTime, Integer, ForeignKey
+from typing import Optional, Dict, Any, List
+from sqlalchemy import String, DateTime, Integer, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.types import JSON
 from app.database.session import Base
+from app.models.project import generate_uuid
 
 # Use JSONB for PostgreSQL, fallback to JSON for SQLite (during testing)
 JSONType = JSON().with_variant(JSONB, "postgresql")
 
-def generate_uuid():
-    return str(uuid.uuid4())
-
-class Project(Base):
-    __tablename__ = "projects"
+class ProjectHistory(Base):
+    __tablename__ = "project_histories"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=generate_uuid)
-    name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
-    description: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    owner_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id"), nullable=False, index=True)
+    project_id: Mapped[str] = mapped_column(String(36), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False, index=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
     
-    # State fields
-    version: Mapped[int] = mapped_column(Integer, default=1)
-    status: Mapped[str] = mapped_column(String(50), default="active")
-    favorite: Mapped[bool] = mapped_column(Boolean, default=False)
-    archived: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Store what changed or a summary
+    action: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-    # JSON configurations
+    # Relationships
+    project = relationship("Project", back_populates="history")
+
+
+class ProjectSnapshot(Base):
+    __tablename__ = "project_snapshots"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=generate_uuid)
+    project_id: Mapped[str] = mapped_column(String(36), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    
+    # The complete state of the project at this point
     dataset_references: Mapped[Optional[List[Dict[str, Any]]]] = mapped_column(JSONType, nullable=True)
     dashboard_layout: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONType, nullable=True)
     filters: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONType, nullable=True)
@@ -38,11 +47,6 @@ class Project(Base):
     theme: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONType, nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    last_opened_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
 
     # Relationships
-    owner = relationship("User", backref="projects")
-    history = relationship("ProjectHistory", back_populates="project", cascade="all, delete-orphan")
-    snapshots = relationship("ProjectSnapshot", back_populates="project", cascade="all, delete-orphan")
-    reports = relationship("Report", back_populates="project", cascade="all, delete-orphan")
+    project = relationship("Project", back_populates="snapshots")
