@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from app.models.report import Report, ExportJob, ExportFormat, ExportStatus
 
 class ReportService:
-    def create_report(self, db: Session, project_id: str, name: str, template_type: str, configuration: dict = None, description: str = None) -> Report:
+    def create_report(self, db: Session, project_id: str, name: str, template_type: str, configuration: dict | None = None, description: str | None = None) -> Report:
         report = Report(
             project_id=project_id,
             name=name,

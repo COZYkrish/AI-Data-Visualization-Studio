@@ -34,7 +34,7 @@ class PDFExportService:
         
         desc = report.description if report and report.description else project.description
         if desc:
-            Story.append(Paragraph(desc, styles['Normal']))
+            Story.append(Paragraph(str(desc), styles['Normal']))
             Story.append(Spacer(1, 12))
             
         # Add basic project info
