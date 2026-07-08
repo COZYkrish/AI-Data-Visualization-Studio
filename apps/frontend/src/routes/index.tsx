@@ -22,6 +22,7 @@ import {
 } from "../features/dashboard/Dashboard";
 import { Upload } from "../features/upload/Upload";
 import { Projects } from "../features/projects/Projects";
+import { Reports } from "../features/reports/Reports";
 import { Settings } from "../features/settings/Settings";
 import { NotFound } from "../features/error/NotFound";
 import {
@@ -133,6 +134,10 @@ export const router = createBrowserRouter([
           {
             path: "projects",
             element: <Projects />,
+          },
+          {
+            path: "reports",
+            element: <Reports />,
           },
           {
             path: "settings",
