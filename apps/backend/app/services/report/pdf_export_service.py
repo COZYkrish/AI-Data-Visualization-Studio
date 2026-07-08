@@ -4,6 +4,7 @@ from datetime import datetime
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from typing import Any
 from app.models.project import Project
 from app.models.report import Report
 
@@ -24,7 +25,7 @@ class PDFExportService:
         # Add some custom styles
         styles.add(ParagraphStyle(name='CenterTitle', parent=styles['Heading1'], alignment=1))
         
-        Story = []
+        Story: list[Any] = []
         
         # Title Page
         title = report.name if report else project.name

@@ -18,3 +18,4 @@ export * from "./Alert";
 export * from "./Toast";
 export * from "./Label";
 export * from "./Textarea";
+export * from "./Select";
