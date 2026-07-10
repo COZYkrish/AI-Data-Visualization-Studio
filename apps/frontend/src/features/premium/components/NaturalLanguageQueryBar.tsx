@@ -42,7 +42,7 @@ export const NaturalLanguageQueryBar: React.FC<NLQBarProps> = ({
   datasetId,
   onResultApply,
 }) => {
-  const { query, result, isLoading, error, submit, reset } = useNLQ();
+  const { result, isLoading, error, submit, reset } = useNLQ();
   const [localQuery, setLocalQuery] = React.useState("");
   const [placeholderIdx, setPlaceholderIdx] = React.useState(0);
   const inputRef = React.useRef<HTMLInputElement>(null);

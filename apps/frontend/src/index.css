@@ -480,3 +480,122 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================================
+   PHASE 9 — ACCESSIBILITY CLASS OVERRIDES
+   ============================================================ */
+
+/* .reduce-motion — explicit user preference (overrides media query for testing) */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* .high-contrast — enhanced contrast mode */
+.high-contrast {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --primary: 262 100% 40%;
+  --border: 0 0% 0%;
+  --muted: 0 0% 90%;
+  --muted-foreground: 0 0% 20%;
+}
+.high-contrast.dark {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --primary: 262 100% 80%;
+  --border: 0 0% 100%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 85%;
+}
+
+/* .large-font — increased base font size */
+.large-font {
+  font-size: 18px;
+}
+.large-font .text-xs {
+  font-size: 0.875rem !important;
+}
+.large-font .text-sm {
+  font-size: 1rem !important;
+}
+.large-font .text-base {
+  font-size: 1.125rem !important;
+}
+
+/* .focus-visible-always — force focus rings to always show */
+.focus-visible-always *:focus {
+  outline: 2px solid hsl(var(--primary)) !important;
+  outline-offset: 2px !important;
+}
+
+/* ============================================================
+   PHASE 9 — PREMIUM UI UTILITIES
+   ============================================================ */
+
+/* Command Palette & Dialog Backdrop Blur */
+.premium-backdrop {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* NLQ Bar gradient shimmer */
+@keyframes nlq-shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+.nlq-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--primary) / 0.2) 50%,
+    hsl(var(--muted)) 75%
+  );
+  background-size: 200% auto;
+  animation: nlq-shimmer 2s linear infinite;
+}
+
+/* Suggestion priority bar animation */
+@keyframes bar-fill {
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--bar-width);
+  }
+}
+.priority-bar {
+  animation: bar-fill 0.6s ease-out forwards;
+}
+
+/* Notification entrance */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Premium card hover glow */
+.premium-card-hover {
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+.premium-card-hover:hover {
+  box-shadow:
+    0 0 0 1px hsl(var(--primary) / 0.3),
+    0 4px 16px hsl(var(--primary) / 0.1);
+  border-color: hsl(var(--primary) / 0.4);
+}
