@@ -146,7 +146,10 @@ export const FeatureImportanceCard: React.FC<FeatureImportanceCardProps> = ({
             tickLine={false}
           />
           <Tooltip
-            formatter={(v: number) => [v.toFixed(4), "Importance"]}
+            formatter={(v: any) => [
+              typeof v === "number" ? v.toFixed(4) : v,
+              "Importance",
+            ]}
             contentStyle={{
               background: "hsl(var(--card))",
               border: "1px solid hsl(var(--border))",

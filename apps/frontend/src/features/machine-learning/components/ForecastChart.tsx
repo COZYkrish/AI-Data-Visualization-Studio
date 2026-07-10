@@ -150,8 +150,8 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({
               fontSize: "12px",
             }}
             labelStyle={{ fontWeight: 600, marginBottom: "4px" }}
-            formatter={(value: number, name: string) => [
-              value.toFixed(3),
+            formatter={(value: any, name: any) => [
+              typeof value === "number" ? value.toFixed(3) : value,
               name === "forecast"
                 ? "Forecast"
                 : name === "upper"

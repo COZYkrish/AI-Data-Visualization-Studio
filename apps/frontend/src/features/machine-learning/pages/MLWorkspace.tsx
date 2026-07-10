@@ -16,8 +16,7 @@ import {
   useDeleteModel,
   useRetrainModel,
 } from "../hooks/useML";
-import { useDatasets } from "../../datasets/hooks/useDatasets";
-import { useDatasetDetail } from "../../datasets/hooks/useDatasets";
+import { useDatasets, useDataset } from "../../datasets/hooks/useDatasets";
 
 import {
   MLEmptyState,
@@ -53,7 +52,9 @@ export const MLWorkspace: React.FC = () => {
   const [isWizardOpen, setIsWizardOpen] = React.useState(false);
 
   // Queries
-  const { data: datasets = [], isLoading: isLoadingDatasets } = useDatasets();
+  const { data: datasetsResponse, isLoading: isLoadingDatasets } =
+    useDatasets();
+  const datasets = datasetsResponse?.data || [];
   const { data: savedModels = [], isLoading: isLoadingModels } =
     useSavedModels();
 
@@ -139,11 +140,10 @@ export const MLWorkspace: React.FC = () => {
   };
 
   // Detailed columns logic for wizard
-  const { data: datasetDetail } = useDatasetDetail(
-    wizardState.datasetId ?? undefined,
-  );
-  const dsColumns =
-    datasetDetail?.metadata?.columns?.map((c: any) => c.name) ?? [];
+  const { data: datasetDetail } = useDataset(wizardState.datasetId ?? "");
+  const dsColumns = Array.isArray(datasetDetail?.metadata?.columns)
+    ? datasetDetail.metadata.columns.map((c: any) => c.name)
+    : [];
 
   return (
     <div className="space-y-6">
@@ -205,7 +205,10 @@ export const MLWorkspace: React.FC = () => {
                 Training Wizard
               </h3>
               <TrainingWizard
-                datasets={datasets.map((d) => ({
+                datasets={(Array.isArray(datasets)
+                  ? datasets
+                  : (datasets as any)?.data || []
+                ).map((d: any) => ({
                   id: d.id,
                   name: d.name,
                   rows: d.metadata?.total_rows ?? 0,
