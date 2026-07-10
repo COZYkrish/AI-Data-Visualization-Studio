@@ -2,6 +2,7 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { ProfileCard } from "./components/ProfileCard";
 import { SessionsCard } from "./components/SessionsCard";
+import { PremiumSettings } from "../premium/pages/PremiumSettings";
 
 export const Settings: React.FC = () => {
   return (
@@ -11,7 +12,8 @@ export const Settings: React.FC = () => {
           Settings
         </h1>
         <p className="text-muted-foreground">
-          Manage your account settings, profile, and security preferences.
+          Manage your account, security, theme, accessibility, and workspace
+          preferences.
         </p>
       </div>
 
@@ -23,6 +25,7 @@ export const Settings: React.FC = () => {
       >
         <ProfileCard />
         <SessionsCard />
+        <PremiumSettings />
       </motion.div>
     </div>
   );
