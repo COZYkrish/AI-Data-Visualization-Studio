@@ -34,6 +34,21 @@ export const API_ROUTES = {
     EXPORT: "/dashboard/export-chart",
     STATISTICS: (id: string) => `/dashboard/datasets/${id}/statistics`,
   },
+  PREMIUM: {
+    PREFERENCES: "/preferences",
+    NOTIFICATIONS: "/notifications",
+    NOTIFICATION: (id: string) => `/notifications/${id}`,
+    NOTIFICATIONS_MARK_ALL_READ: "/notifications/mark-all-read",
+    ACTIVITY: "/activity",
+    NLQ: "/nlq/query",
+    SUGGESTIONS: "/suggestions",
+    SUGGESTIONS_GENERATE: "/suggestions/generate",
+    SUGGESTION_DISMISS: (id: string) => `/suggestions/${id}/dismiss`,
+    SUGGESTION_APPLY: (id: string) => `/suggestions/${id}/apply`,
+    SHORTCUTS: "/shortcuts",
+    SHORTCUT: (actionId: string) => `/shortcuts/${actionId}`,
+    SHORTCUT_RESET: (actionId: string) => `/shortcuts/${actionId}/reset`,
+  },
 };
 
 export const STORAGE_KEYS = {
