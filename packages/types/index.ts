@@ -1,4 +1,146 @@
-export type Theme = "light" | "dark" | "system";
+export type Theme = "light" | "dark" | "system" | "high-contrast";
+
+export interface UserPreference {
+  id: string;
+  user_id: string;
+  theme: Theme;
+  accent_color: string;
+  compact_mode: boolean;
+  large_font: boolean;
+  reduced_motion: boolean;
+  high_contrast: boolean;
+  focus_visible: boolean;
+  color_blind_mode?: string | null;
+  timezone: string;
+  date_format: string;
+  number_format: string;
+  language: string;
+  default_chart_type?: string | null;
+  default_dataset_id?: string | null;
+  notification_preferences: Record<string, boolean>;
+  version: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ActivityLog {
+  id: string;
+  user_id: string;
+  action: string;
+  entity_type?: string | null;
+  entity_id?: string | null;
+  entity_name?: string | null;
+  status: string;
+  description?: string | null;
+  metadata?: Record<string, unknown> | null;
+  created_at: string;
+}
+
+export interface PersistentNotification {
+  id: string;
+  user_id: string;
+  type: "info" | "success" | "warning" | "error";
+  title: string;
+  message: string;
+  action_label?: string | null;
+  action_url?: string | null;
+  entity_type?: string | null;
+  entity_id?: string | null;
+  read: boolean;
+  dismissed: boolean;
+  metadata?: Record<string, unknown> | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface NLQOperation {
+  intent: string;
+  x_column?: string | null;
+  y_column?: string | null;
+  group_by?: string | null;
+  filter_column?: string | null;
+  filter_value?: unknown;
+  filter_operator?: string | null;
+  sort_by?: string | null;
+  sort_order?: string | null;
+  limit?: number | null;
+  aggregation?: string | null;
+  chart_type?: string | null;
+  compare_values?: unknown[] | null;
+}
+
+export interface NLQResult {
+  success: boolean;
+  intent?: string | null;
+  operation?: NLQOperation | null;
+  chart_type?: string | null;
+  explanation?: string | null;
+  fallback_suggestions?: string[] | null;
+  raw_query: string;
+}
+
+export interface NLQResponse {
+  result: NLQResult;
+  processing_time_ms: number;
+}
+
+export interface DashboardSuggestion {
+  id: string;
+  user_id: string;
+  dataset_id?: string | null;
+  suggestion_type:
+    "chart" | "filter" | "kpi" | "ml" | "forecast" | "correlation";
+  title: string;
+  description: string;
+  why: string;
+  priority: number;
+  config?: Record<string, unknown> | null;
+  dismissed: boolean;
+  applied: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface KeyboardShortcut {
+  id: string;
+  user_id: string;
+  action_id: string;
+  label: string;
+  default_keys: string[];
+  custom_keys?: string[] | null;
+  category: string;
+  enabled: boolean;
+  created_at: string;
+  updated_at: string;
+  // Computed effective keys
+  effective_keys?: string[];
+}
+
+export interface AccessibilityConfig {
+  reducedMotion: boolean;
+  highContrast: boolean;
+  largeFont: boolean;
+  focusVisible: boolean;
+  colorBlindMode?: string | null;
+}
+
+export interface CommandPaletteItem {
+  id: string;
+  label: string;
+  description?: string;
+  icon?: string;
+  category:
+    | "navigation"
+    | "action"
+    | "dataset"
+    | "project"
+    | "report"
+    | "ml"
+    | "search";
+  keywords?: string[];
+  shortcut?: string[];
+  action: () => void;
+}
 
 export interface User {
   id: string;
