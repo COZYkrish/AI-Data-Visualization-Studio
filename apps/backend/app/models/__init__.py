@@ -15,3 +15,10 @@ from app.models.machine_learning import (
     MLForecast,
     MLEvaluationResult,
 )
+from app.models.premium import (
+    UserPreference,
+    PersistentNotification,
+    ActivityLog,
+    SavedShortcut,
+    DashboardSuggestion,
+)
