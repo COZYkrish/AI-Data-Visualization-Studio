@@ -99,13 +99,16 @@ class MLModel(Base):
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     model_type: Mapped[MLModelType] = mapped_column(
-        Enum(MLModelType), nullable=False, index=True
+        Enum(MLModelType, values_callable=lambda obj: [e.value for e in obj]),
+        nullable=False, index=True
     )
     algorithm: Mapped[MLAlgorithm] = mapped_column(
-        Enum(MLAlgorithm), nullable=False
+        Enum(MLAlgorithm, values_callable=lambda obj: [e.value for e in obj]),
+        nullable=False
     )
     status: Mapped[MLModelStatus] = mapped_column(
-        Enum(MLModelStatus), default=MLModelStatus.TRAINING
+        Enum(MLModelStatus, values_callable=lambda obj: [e.value for e in obj]),
+        default=MLModelStatus.TRAINING
     )
 
     # Serialised model storage (relative path inside uploads/models/)
@@ -176,7 +179,8 @@ class MLModelRun(Base):
 
     run_number: Mapped[int] = mapped_column(Integer, default=1)
     status: Mapped[MLModelStatus] = mapped_column(
-        Enum(MLModelStatus), default=MLModelStatus.TRAINING
+        Enum(MLModelStatus, values_callable=lambda obj: [e.value for e in obj]),
+        default=MLModelStatus.TRAINING
     )
 
     hyperparameters: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
@@ -216,7 +220,8 @@ class MLPrediction(Base):
     )
 
     prediction_type: Mapped[PredictionType] = mapped_column(
-        Enum(PredictionType), default=PredictionType.SINGLE
+        Enum(PredictionType, values_callable=lambda obj: [e.value for e in obj]),
+        default=PredictionType.SINGLE
     )
 
     # Input features sent by the user (JSON)
