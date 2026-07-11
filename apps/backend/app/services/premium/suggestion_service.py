@@ -188,8 +188,8 @@ class SuggestionService:
         col_count = 0
 
         if dataset:
-            row_count = dataset.row_count or 0
-            col_count = dataset.column_count or 0
+            row_count = int(dataset.row_count or 0)  # type: ignore
+            col_count = int(dataset.column_count or 0)  # type: ignore
 
         if metadata:
             raw = metadata.column_metadata or {}
@@ -260,7 +260,7 @@ class SuggestionService:
             DashboardSuggestion.user_id == str(user_id),
         ).first()
         if sug:
-            sug.dismissed = True
+            sug.dismissed = True  # type: ignore
             db.commit()
             db.refresh(sug)
             logger.info("suggestion_dismissed", suggestion_id=suggestion_id, user_id=str(user_id))
@@ -272,7 +272,7 @@ class SuggestionService:
             DashboardSuggestion.user_id == str(user_id),
         ).first()
         if sug:
-            sug.applied = True
+            sug.applied = True  # type: ignore
             db.commit()
             db.refresh(sug)
         return sug

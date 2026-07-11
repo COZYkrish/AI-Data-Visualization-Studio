@@ -14,6 +14,7 @@ python-multipart>=0.0.9
 pandas>=2.2.1
 numpy>=1.26.4
 openpyxl>=3.1.2
+xlrd>=2.0.1
 chardet>=5.2.0
 email-validator>=2.1.1
 scipy>=1.12.0

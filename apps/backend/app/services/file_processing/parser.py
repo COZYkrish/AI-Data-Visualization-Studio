@@ -19,10 +19,14 @@ def parse_csv(file_path: str) -> pd.DataFrame:
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to parse CSV file: {str(e)}")
 
-def parse_excel(file_path: str) -> pd.DataFrame:
+def parse_excel(file_path: str, filename: str = "") -> pd.DataFrame:
     try:
-        # Read the first sheet by default
-        df = pd.read_excel(file_path, engine='openpyxl')
+        ext = os.path.splitext(filename)[1].lower() if filename else os.path.splitext(file_path)[1].lower()
+        # Legacy .xls format requires xlrd; modern .xlsx uses openpyxl
+        if ext == '.xls':
+            df = pd.read_excel(file_path, engine='xlrd')
+        else:
+            df = pd.read_excel(file_path, engine='openpyxl')
         return df
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to parse Excel file: {str(e)}")
@@ -38,11 +42,11 @@ def parse_file(file_path: str, file_type: str, filename: str) -> pd.DataFrame:
     """Entry point to parse a file into a Pandas DataFrame."""
     ext = os.path.splitext(filename)[1].lower()
     
-    if ext == '.csv' or file_type == 'text/csv':
+    if ext == '.csv' or 'csv' in file_type:
         df = parse_csv(file_path)
     elif ext in {'.xlsx', '.xls'} or 'excel' in file_type or 'spreadsheetml' in file_type:
-        df = parse_excel(file_path)
-    elif ext == '.json' or file_type == 'application/json':
+        df = parse_excel(file_path, filename)
+    elif ext == '.json' or 'json' in file_type:
         df = parse_json(file_path)
     else:
         raise HTTPException(status_code=400, detail="Unsupported file format for parsing.")

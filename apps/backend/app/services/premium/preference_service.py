@@ -6,7 +6,7 @@ Each user gets a default record on first access.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, cast
 from sqlalchemy.orm import Session
 import structlog
 
@@ -62,14 +62,15 @@ class PreferenceService:
 
         # Merge notification_preferences if provided (partial update)
         if "notification_preferences" in update_data:
-            merged = dict(pref.notification_preferences or {})
+            current_prefs = cast(Dict[str, Any], pref.notification_preferences) or {}
+            merged = dict(current_prefs)
             merged.update(update_data["notification_preferences"])
             update_data["notification_preferences"] = merged
 
         for field, value in update_data.items():
             setattr(pref, field, value)
 
-        pref.version += 1
+        pref.version += 1  # type: ignore[assignment]
         db.commit()
         db.refresh(pref)
         logger.info(

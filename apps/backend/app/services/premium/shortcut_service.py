@@ -103,9 +103,9 @@ class ShortcutService:
                     return None
 
         if update.custom_keys is not None:
-            sc.custom_keys = update.custom_keys
+            sc.custom_keys = update.custom_keys  # type: ignore
         if update.enabled is not None:
-            sc.enabled = update.enabled
+            sc.enabled = update.enabled  # type: ignore
 
         db.commit()
         db.refresh(sc)
@@ -125,7 +125,7 @@ class ShortcutService:
             SavedShortcut.action_id == action_id,
         ).first()
         if sc:
-            sc.custom_keys = None
+            sc.custom_keys = None  # type: ignore
             db.commit()
             db.refresh(sc)
         return sc
