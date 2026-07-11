@@ -1,5 +1,5 @@
 from typing import Optional, Dict, Any, List
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from datetime import datetime
 from app.models.dataset import UploadStatus, JobStatus
 
@@ -49,6 +49,9 @@ class ProcessingJobResponse(ProcessingJobBase):
     model_config = ConfigDict(from_attributes=True)
 
 # Main Dataset Response
+# NOTE: SQLAlchemy's declarative base injects a `metadata` attribute on every
+# model (the MetaData() registry). To avoid the naming collision, we read from
+# the ORM relationship `metadata_rel` and expose it as `metadata` in the JSON.
 class DatasetResponse(DatasetBase):
     id: str
     user_id: str
@@ -60,11 +63,15 @@ class DatasetResponse(DatasetBase):
     upload_progress: int
     created_at: datetime
     updated_at: datetime
-    
-    metadata: Optional[DatasetMetadataResponse] = None
+
+    # Read from the ORM relationship named `metadata_rel` (not SQLAlchemy's
+    # built-in `metadata` which is a MetaData() object, not our record).
+    # Use validation_alias so the field reads from `metadata_rel` on input
+    # but serializes as "metadata" in the JSON output (matching frontend types).
+    metadata: Optional[DatasetMetadataResponse] = Field(default=None, validation_alias="metadata_rel")
     jobs: List[ProcessingJobResponse] = []
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 # Pagination Schemas
 class PaginatedDatasetResponse(BaseModel):

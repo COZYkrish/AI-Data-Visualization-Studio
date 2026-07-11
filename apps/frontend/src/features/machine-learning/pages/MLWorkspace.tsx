@@ -16,7 +16,7 @@ import {
   useDeleteModel,
   useRetrainModel,
 } from "../hooks/useML";
-import { useDatasets, useDataset } from "../../datasets/hooks/useDatasets";
+import { useDatasets } from "../../datasets/hooks/useDatasets";
 
 import {
   MLEmptyState,
@@ -52,9 +52,13 @@ export const MLWorkspace: React.FC = () => {
   const [isWizardOpen, setIsWizardOpen] = React.useState(false);
 
   // Queries
-  const { data: datasetsResponse, isLoading: isLoadingDatasets } =
-    useDatasets();
-  const datasets = datasetsResponse?.data || [];
+  const { data: datasetsResponse, isLoading: isLoadingDatasets } = useDatasets(
+    0,
+    100,
+  );
+  // datasetsResponse.data is PaginatedDatasets — unwrap .items
+  const datasets = datasetsResponse?.data?.items ?? [];
+
   const { data: savedModels = [], isLoading: isLoadingModels } =
     useSavedModels();
 
@@ -139,10 +143,11 @@ export const MLWorkspace: React.FC = () => {
     }
   };
 
-  // Detailed columns logic for wizard
-  const { data: datasetDetail } = useDataset(wizardState.datasetId ?? "");
-  const dsColumns = Array.isArray(datasetDetail?.metadata?.columns)
-    ? datasetDetail.metadata.columns.map((c: any) => c.name)
+  // Derive columns from the already-fetched dataset list (available immediately).
+  // Using useDataset lazily would leave dsColumns empty when the Target step first renders.
+  const selectedDataset = datasets.find((d) => d.id === wizardState.datasetId);
+  const dsColumns = selectedDataset?.metadata?.detected_columns
+    ? Object.keys(selectedDataset.metadata.detected_columns)
     : [];
 
   return (
@@ -205,15 +210,14 @@ export const MLWorkspace: React.FC = () => {
                 Training Wizard
               </h3>
               <TrainingWizard
-                datasets={(Array.isArray(datasets)
-                  ? datasets
-                  : (datasets as any)?.data || []
-                ).map((d: any) => ({
-                  id: d.id,
-                  name: d.name,
-                  rows: d.metadata?.total_rows ?? 0,
-                  cols: d.metadata?.total_columns ?? 0,
-                }))}
+                datasets={datasets
+                  .filter((d) => d.upload_status === "ready")
+                  .map((d) => ({
+                    id: d.id,
+                    name: d.original_filename,
+                    rows: d.row_count ?? 0,
+                    cols: d.column_count ?? 0,
+                  }))}
                 columns={dsColumns}
                 isTraining={
                   trainMutation.isPending || forecastMutation.isPending

@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { UploadDropzone } from "../components";
 import { motion } from "framer-motion";
+import { useDatasetStore } from "../store/datasetStore";
 
 export const DatasetUpload = () => {
+  const clearUploads = useDatasetStore((s) => s.clearUploads);
+
+  // Clear stale failed/completed uploads from previous sessions each time
+  // the upload page is opened, so the dropzone starts fresh.
+  useEffect(() => {
+    clearUploads();
+  }, [clearUploads]);
+
   return (
     <div className="container mx-auto py-12 px-4 max-w-5xl">
       <motion.div

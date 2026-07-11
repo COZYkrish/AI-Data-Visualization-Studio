@@ -58,8 +58,12 @@ export function useDatasetPreview(
 
 export function useUploadDataset() {
   const queryClient = useQueryClient();
-  const { setUploadProgress, setProcessingState, setValidationError } =
-    useDatasetStore();
+  const {
+    setUploadProgress,
+    setProcessingState,
+    setValidationError,
+    removeUpload,
+  } = useDatasetStore();
 
   return useMutation({
     mutationFn: async (file: File) => {
@@ -75,9 +79,12 @@ export function useUploadDataset() {
         }
       });
     },
-    onSuccess: () => {
+    onSuccess: (_data, file) => {
+      // Mark as ready in the dropzone UI, then auto-remove after 2s
+      setProcessingState(file.name, "ready");
       toast.success("Dataset uploaded successfully");
       queryClient.invalidateQueries({ queryKey: useDatasetsKeys.lists() });
+      setTimeout(() => removeUpload(file.name), 2000);
     },
     onError: (error: any, file: File) => {
       const message =
