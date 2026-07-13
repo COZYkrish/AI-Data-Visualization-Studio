@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useToast } from "@studio/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { BrainCircuit, Plus, Sparkles, AlertCircle } from "lucide-react";
 
@@ -46,6 +47,7 @@ import type {
 } from "../types";
 
 export const MLWorkspace: React.FC = () => {
+  const { toast } = useToast();
   const { wizardState, activeModel, setActiveModel, resetWizard } =
     useMLStore();
 
@@ -119,15 +121,37 @@ export const MLWorkspace: React.FC = () => {
       }
       setIsWizardOpen(false);
       setActiveModel(result);
-    } catch (e) {
+      toast({
+        title: "Success",
+        description: "Model training initiated successfully",
+        type: "success",
+      });
+    } catch (e: any) {
       console.error(e);
+      const msg =
+        e.response?.data?.detail || e.message || "Failed to train model";
+      toast({ title: "Error", description: msg, type: "error" });
     }
   };
 
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this model?")) {
-      await deleteMutation.mutateAsync(id);
-      if (activeModel?.id === id) setActiveModel(null);
+      try {
+        await deleteMutation.mutateAsync(id);
+        if (activeModel?.id === id) setActiveModel(null);
+        toast({
+          title: "Success",
+          description: "Model deleted",
+          type: "success",
+        });
+      } catch (e: any) {
+        console.error(e);
+        toast({
+          title: "Error",
+          description: e.response?.data?.detail || "Failed to delete model",
+          type: "error",
+        });
+      }
     }
   };
 
@@ -138,8 +162,18 @@ export const MLWorkspace: React.FC = () => {
         model_id: activeModel.id,
         input_data: input,
       });
-    } catch (e) {
+      toast({
+        title: "Success",
+        description: "Prediction generated successfully",
+        type: "success",
+      });
+    } catch (e: any) {
       console.error(e);
+      toast({
+        title: "Error",
+        description: e.response?.data?.detail || "Prediction failed",
+        type: "error",
+      });
     }
   };
 

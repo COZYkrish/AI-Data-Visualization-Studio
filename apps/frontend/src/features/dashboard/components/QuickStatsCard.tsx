@@ -31,8 +31,19 @@ export const QuickStatsCard: React.FC<Props> = ({ statistics }) => {
       </div>
       <div className="divide-y divide-border overflow-y-auto max-h-96 custom-scrollbar">
         {columns.map((col, i) => {
-          const stat: ColumnStat | undefined = statistics.column_stats?.[col];
-          const type = stat?.inferred_type ?? "unknown";
+          const stat: any = statistics.column_stats?.[col];
+          let rawType = stat?.inferred_type || stat?.type || "unknown";
+
+          // Map backend types to frontend expected badge types
+          if (rawType === "integer" || rawType === "float") rawType = "numeric";
+          if (
+            rawType === "category" ||
+            rawType === "text" ||
+            rawType === "string"
+          )
+            rawType = "categorical";
+
+          const type = rawType;
           const badgeClass = TYPE_BADGE[type] ?? TYPE_BADGE.unknown;
 
           return (
